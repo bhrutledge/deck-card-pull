@@ -404,7 +404,7 @@ const DeckComponent = {
         @click="handleDeckClick"
       >
       </div>
-      <p class="deck-instructions">Click to draw cards to make your own playlist. Copy the URL to save or share your pull.</p>
+      <span v-if="hasCards" class="copy-instructions">Copy this page's URL to save or share your pull.</span>
       <a
         v-if="hasCards"
         href="#"
@@ -487,13 +487,6 @@ const CardList = {
               >
                 <i class="fab fa-youtube"></i>
               </a>
-              <span
-                v-else
-                class="music-link youtube-music-link disabled"
-                title="YouTube Music (coming soon)"
-              >
-                <i class="fab fa-youtube"></i>
-              </span>
             </div>
           </div>
         </div>
