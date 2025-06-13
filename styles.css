@@ -79,9 +79,7 @@ body {
 
 .start-over-link {
     color: #e74c3c;
-    text-decoration: none;
     font-size: 0.9rem;
-    font-weight: 500;
     text-align: center;
 }
 
@@ -108,9 +106,21 @@ body {
     margin: 2rem auto;
 }
 
-.copy-instructions {
+.copy-link {
+    color: #3498db;
     font-size: 0.9rem;
     text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.copy-link:hover {
+    color: #2980b9;
+    text-decoration: underline;
+}
+
+.copy-link.copied {
+    color: #27ae60;
 }
 
 /* Mobile adjustments */

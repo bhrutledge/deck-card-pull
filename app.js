@@ -404,7 +404,6 @@ const DeckComponent = {
         @click="handleDeckClick"
       >
       </div>
-      <span v-if="hasCards" class="copy-instructions">Copy this page's URL to save or share your pull.</span>
       <a
         v-if="hasCards"
         href="#"
@@ -413,12 +412,48 @@ const DeckComponent = {
       >
         Start over
       </a>
+      <a
+        v-if="hasCards"
+        href="#"
+        class="copy-link"
+        @click.prevent="copyUrlToClipboard"
+        :class="{ 'copied': showCopiedFeedback }"
+      >
+        {{ showCopiedFeedback ? 'URL copied!' : "Copy the URL to save or share your pull" }}
+      </a>
     </div>
   `,
+  data() {
+    return {
+      showCopiedFeedback: false
+    };
+  },
   methods: {
     handleDeckClick() {
       if (!this.isDisabled) {
         this.$emit('draw-card');
+      }
+    },
+    async copyUrlToClipboard() {
+      try {
+        await navigator.clipboard.writeText(window.location.href);
+        this.showCopiedFeedback = true;
+        setTimeout(() => {
+          this.showCopiedFeedback = false;
+        }, 2000);
+      } catch (err) {
+        console.error('Failed to copy URL to clipboard:', err);
+        // Fallback for older browsers
+        const textArea = document.createElement('textarea');
+        textArea.value = window.location.href;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+        this.showCopiedFeedback = true;
+        setTimeout(() => {
+          this.showCopiedFeedback = false;
+        }, 2000);
       }
     }
   }
