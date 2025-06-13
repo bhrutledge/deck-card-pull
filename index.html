@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DECK Card Draw</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="app">
+        <div class="container">
+            <main class="main-content">
+                <deck-component
+                    :remaining-cards="remainingCards"
+                    :is-disabled="drawnCards.length >= 13"
+                    :has-cards="hasCards"
+                    @draw-card="drawCard"
+                    @new-pull="startNewPull"
+                ></deck-component>
+
+                <card-list
+                    ref="cardListRef"
+                    :drawn-cards="drawnCards"
+                ></card-list>
+            </main>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

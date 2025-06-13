@@ -1,0 +1,285 @@
+/* Reset and base styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background-color: #f5f5f5;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1rem;
+}
+
+/* Main content layout */
+.main-content {
+    display: grid;
+    gap: 2rem;
+    grid-template-columns: 160px 1fr; /* Always use sidebar layout */
+    align-items: start;
+}
+
+/* Deck component - always sticky sidebar */
+.deck-container {
+    position: sticky;
+    top: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    align-self: start;
+}
+
+.deck {
+    width: 120px;
+    height: 168px;
+    background-image: url('./cards/back.jpg');
+    background-size: cover;
+    background-position: center;
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    position: relative;
+}
+
+.deck:hover:not(.disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+.deck.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.deck-info {
+    text-align: center;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.new-pull-btn {
+    background: #e74c3c;
+    color: white;
+    border: none;
+    padding: 0.8rem 1.2rem;
+    border-radius: 4px;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 0.9rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    align-self: center;
+}
+
+.new-pull-btn:hover {
+    background: #c0392b;
+}
+
+/* Card grid */
+.card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 1rem;
+}
+
+/* Mobile adjustments */
+@media (max-width: 480px) {
+    .main-content {
+        grid-template-columns: 120px 1fr; /* Narrower sidebar on very small screens */
+        gap: 1rem;
+    }
+
+    .deck {
+        width: 100px;
+        height: 140px;
+    }
+
+    .new-pull-btn {
+        font-size: 0.8rem;
+        padding: 0.6rem 0.8rem;
+    }
+
+    .card-grid {
+        grid-template-columns: 1fr; /* Single column on very small screens */
+        gap: 1.5rem;
+    }
+
+    .card-image {
+        max-width: 100px; /* Match deck size */
+    }
+}
+
+@media (min-width: 481px) and (max-width: 767px) {
+    .main-content {
+        grid-template-columns: 140px 1fr; /* Medium sidebar */
+        gap: 1.5rem;
+    }
+
+    .deck {
+        width: 110px;
+        height: 154px;
+    }
+
+    .card-grid {
+        grid-template-columns: repeat(2, 1fr); /* Two columns on small screens */
+        gap: 1.5rem;
+    }
+
+    .card-image {
+        max-width: 110px; /* Match deck size */
+    }
+}
+
+.card-grid-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.card-image {
+    width: 100%;
+    max-width: 120px;
+    height: auto;
+    aspect-ratio: 5/7;
+    object-fit: cover;
+    border-radius: 4px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    margin-bottom: 0.5rem;
+}
+
+.card-content {
+    flex: 1;
+}
+
+.card-title {
+    font-size: 1rem;
+    font-weight: normal;
+    color: #2c3e50;
+    line-height: 1.3;
+}
+
+.card-name {
+    white-space: nowrap;
+}
+
+/* Pull menu */
+.pull-menu {
+    position: relative;
+}
+
+.pull-menu-button {
+    background: #34495e;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.pull-menu-button:hover {
+    background: #2c3e50;
+}
+
+.pull-menu-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    min-width: 200px;
+    z-index: 1000;
+}
+
+.pull-menu-item {
+    display: block;
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: none;
+    background: none;
+    text-align: left;
+    cursor: pointer;
+    border-bottom: 1px solid #eee;
+    color: #333;
+}
+
+.pull-menu-item:hover {
+    background: #f8f9fa;
+}
+
+.pull-menu-item:last-child {
+    border-bottom: none;
+}
+
+.no-pulls {
+    padding: 1rem;
+    color: #666;
+    font-style: italic;
+    text-align: center;
+}
+
+/* Responsive design */
+@media (min-width: 768px) {
+    .main-content {
+        grid-template-columns: 200px 1fr;
+        align-items: start;
+    }
+
+    .deck-container {
+        position: sticky;
+        top: 1rem;
+        align-self: start;
+        align-items: center;
+    }
+
+    .deck {
+        width: 140px;
+        height: 196px;
+    }
+
+    .card-grid {
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        gap: 2rem;
+    }
+
+    .card-image {
+        max-width: 140px; /* Match deck size */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    .card-title {
+        font-size: 1rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    .deck {
+        width: 160px;
+        height: 224px;
+    }
+
+    .card-grid {
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 2.5rem;
+    }
+
+    .card-image {
+        max-width: 160px; /* Match deck size */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    .card-title {
+        font-size: 1rem;
+    }
+}
