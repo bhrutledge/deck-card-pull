@@ -136,6 +136,12 @@ body {
     .card-image {
         max-width: 100px; /* Match deck size */
     }
+
+    .music-link {
+        width: 20px;
+        height: 20px;
+        font-size: 12px;
+    }
 }
 
 @media (min-width: 481px) and (max-width: 767px) {
@@ -166,6 +172,12 @@ body {
     .card-image {
         max-width: 110px; /* Match deck size */
     }
+
+    .music-link {
+        width: 22px;
+        height: 22px;
+        font-size: 14px;
+    }
 }
 
 .card-grid-item {
@@ -195,6 +207,74 @@ body {
     font-weight: normal;
     color: #2c3e50;
     line-height: 1.3;
+    margin-bottom: 0.5rem;
+}
+
+.card-links {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+}
+
+.music-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    font-size: 16px;
+}
+
+.bandcamp-link {
+    background-color: #555;
+    color: white;
+}
+
+.bandcamp-link:hover {
+    background-color: #333;
+    transform: translateY(-1px);
+}
+
+.spotify-link {
+    background-color: #555;
+    color: white;
+}
+
+.spotify-link:hover {
+    background-color: #333;
+    transform: translateY(-1px);
+}
+
+.apple-music-link {
+    background-color: #555;
+    color: white;
+}
+
+.apple-music-link:hover:not(.disabled) {
+    background-color: #333;
+    transform: translateY(-1px);
+}
+
+.youtube-music-link {
+    background-color: #555;
+    color: white;
+}
+
+.youtube-music-link:hover:not(.disabled) {
+    background-color: #333;
+    transform: translateY(-1px);
+}
+
+.music-link.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.music-link.disabled:hover {
+    transform: none;
 }
 
 .card-name {
