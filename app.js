@@ -73,19 +73,22 @@ const DeckComponent = {
   emits: ['draw-card', 'new-pull'],
   template: `
     <div class="deck-container">
+      <h2 class="deck-title">The DECK deck</h2>
       <div
         class="deck"
         :class="{ disabled: isDisabled }"
         @click="handleDeckClick"
       >
       </div>
-      <button
+      <p class="deck-instructions">Click to draw cards to make your own playlist. Copy the URL to save or share your pull.</p>
+      <a
         v-if="hasCards"
-        class="new-pull-btn"
-        @click="$emit('new-pull')"
+        href="#"
+        class="start-over-link"
+        @click.prevent="$emit('new-pull')"
       >
-        New Pull
-      </button>
+        Start over
+      </a>
     </div>
   `,
   methods: {
