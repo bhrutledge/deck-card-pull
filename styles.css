@@ -43,12 +43,7 @@
 
     /* Dimensions */
     --container-max-width: 1400px;
-    --sidebar-mobile: 120px;
-    --sidebar-medium: 140px;
-    --sidebar-desktop: 160px;
     --card-width: 120px;
-    --card-height: 168px;
-    --card-grid-min-width: 140px;
     --instructions-max-width: 30rem;
     --streaming-btn-size: 28px;
     --action-btn-size: 36px;
@@ -101,7 +96,7 @@ body {
 .main-content {
     display: grid;
     gap: var(--spacing-md);
-    grid-template-columns: var(--sidebar-mobile) 1fr; /* Mobile first - narrow sidebar */
+    grid-template-columns: var(--card-width) 1fr;
     align-items: start;
 }
 
@@ -127,7 +122,7 @@ body {
 
 .deck {
     width: var(--card-width);
-    height: var(--card-height);
+    height: calc(var(--card-width) * 1.4); /* 5:7 aspect ratio */
     background-image: url('./cards/back.jpg');
     background-size: cover;
     background-position: center;
@@ -173,7 +168,7 @@ body {
 .streaming-icons {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: var(--spacing-xs);
+    gap: var(--spacing-sm);
     justify-items: center;
     max-width: fit-content;
     margin: var(--spacing-xs) auto;
@@ -551,12 +546,22 @@ body {
 /* Tablet breakpoint (481px and up) */
 @media (min-width: 481px) {
     .main-content {
-        grid-template-columns: var(--sidebar-medium) 1fr; /* Medium sidebar for tablets */
         gap: var(--spacing-lg);
     }
 
     .card-grid {
-        grid-template-columns: repeat(auto-fill, minmax(var(--card-grid-min-width), 1fr)); /* Auto-fill */
+        grid-template-columns: repeat(auto-fill, minmax(calc(var(--card-width) + 20px), 1fr)); /* Auto-fill with card width + padding */
+    }
+}
+
+/* Desktop breakpoint (768px and up) */
+@media (min-width: 768px) {
+    :root {
+        --card-width: 140px;
+    }
+
+    .main-content {
+        gap: var(--spacing-xl);
     }
 
     .streaming-icons {
@@ -564,10 +569,10 @@ body {
     }
 }
 
-/* Desktop breakpoint (768px and up) */
-@media (min-width: 768px) {
-    .main-content {
-        grid-template-columns: var(--sidebar-desktop) 1fr; /* Full sidebar for desktop */
-        gap: var(--spacing-xl);
+/* Large desktop breakpoint (1025px and up) */
+@media (min-width: 1025px) {
+    :root {
+        --card-width: 180px;
+        --streaming-btn-size: 32px;
     }
 }
