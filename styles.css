@@ -97,11 +97,11 @@ body {
     padding: var(--spacing-md);
 }
 
-/* Main content layout */
+/* Main content layout - mobile first */
 .main-content {
     display: grid;
-    gap: var(--spacing-xl);
-    grid-template-columns: var(--sidebar-desktop) 1fr; /* Always use sidebar layout */
+    gap: var(--spacing-md);
+    grid-template-columns: var(--sidebar-mobile) 1fr; /* Mobile first - narrow sidebar */
     align-items: start;
 }
 
@@ -148,11 +148,11 @@ body {
     cursor: not-allowed;
 }
 
-/* Card grid */
+/* Card grid - mobile first */
 .card-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(var(--card-grid-min-width), 1fr));
-    gap: var(--spacing-md);
+    grid-template-columns: 1fr; /* Mobile first - single column */
+    gap: var(--spacing-lg);
 }
 
 .main-instructions {
@@ -177,12 +177,6 @@ body {
     justify-items: center;
     max-width: fit-content;
     margin: var(--spacing-xs) auto;
-}
-
-@media (min-width: 481px) {
-    .streaming-icons {
-        grid-template-columns: repeat(4, 1fr);
-    }
 }
 
 .streaming-icon-btn {
@@ -276,31 +270,6 @@ body {
 
 .clickable-card:hover .clickable-title {
     text-decoration: underline;
-}
-
-/* Mobile adjustments */
-@media (max-width: 480px) {
-    .main-content {
-        grid-template-columns: var(--sidebar-mobile) 1fr; /* Narrower sidebar on very small screens */
-        gap: var(--spacing-md);
-    }
-
-    .card-grid {
-        grid-template-columns: 1fr; /* Single column on very small screens */
-        gap: var(--spacing-lg);
-    }
-}
-
-@media (min-width: 481px) and (max-width: 767px) {
-    .main-content {
-        grid-template-columns: var(--sidebar-medium) 1fr; /* Medium sidebar */
-        gap: var(--spacing-lg);
-    }
-
-    .card-grid {
-        grid-template-columns: repeat(2, 1fr); /* Two columns on small screens */
-        gap: var(--spacing-lg);
-    }
 }
 
 .card-grid-item {
@@ -573,4 +542,32 @@ body {
     display: block;
     margin: var(--spacing-md) auto;
     max-width: 100%;
+}
+
+/* ========================================
+   RESPONSIVE MEDIA QUERIES (Mobile-First)
+   ======================================== */
+
+/* Tablet breakpoint (481px and up) */
+@media (min-width: 481px) {
+    .main-content {
+        grid-template-columns: var(--sidebar-medium) 1fr; /* Medium sidebar for tablets */
+        gap: var(--spacing-lg);
+    }
+
+    .card-grid {
+        grid-template-columns: repeat(auto-fill, minmax(var(--card-grid-min-width), 1fr)); /* Auto-fill */
+    }
+
+    .streaming-icons {
+        grid-template-columns: repeat(4, 1fr); /* 4 streaming icons across */
+    }
+}
+
+/* Desktop breakpoint (768px and up) */
+@media (min-width: 768px) {
+    .main-content {
+        grid-template-columns: var(--sidebar-desktop) 1fr; /* Full sidebar for desktop */
+        gap: var(--spacing-xl);
+    }
 }

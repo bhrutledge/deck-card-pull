@@ -457,7 +457,7 @@ const DeckComponent = {
           <i class="fas fa-times"></i>
         </button>
         <p><a href="https://www.hallelujahthehills.com/music/deck/" target="_blank" rel="noopener noreferrer">DECK</a> is 3.5+ hours of music from Hallelujah The Hills. DECK is 4 albums released in one day. DECK is an actual deck of playing cards with a visual design meant to reflect the song it corresponds to. DECK is an invitation to listeners to craft their own musical/visual experience however they wish to do so.</p>
-        <img src="https://res.cloudinary.com/dgojqlr7m/image/fetch/c_fill,w_360/https://res.cloudinary.com/dgojqlr7m/image/upload/v1742949999/DECK_4_panel.jpg" alt="DECK Album Art">
+        <img width="360" height="360" src="https://res.cloudinary.com/dgojqlr7m/image/fetch/c_fill,w_360/https://res.cloudinary.com/dgojqlr7m/image/upload/v1742949999/DECK_4_panel.jpg" alt="DECK Album Art">
         <p>All artwork by Ryan H. Walsh.</p>
         </div>
     </div>
