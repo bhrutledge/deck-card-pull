@@ -284,6 +284,12 @@ body {
     box-shadow: var(--shadow-card);
     margin-bottom: var(--spacing-sm);
     transition: transform var(--transition);
+
+    /* Show card back while image loads */
+    background-image: url('./cards/back.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
 }
 
 .card-content {
