@@ -407,19 +407,19 @@ const DeckComponent = {
       <a
         v-if="hasCards"
         href="#"
-        class="start-over-link"
-        @click.prevent="$emit('new-pull')"
-      >
-        Start over
-      </a>
-      <a
-        v-if="hasCards"
-        href="#"
         class="copy-link"
         @click.prevent="copyUrlToClipboard"
         :class="{ 'copied': showCopiedFeedback }"
       >
-        {{ showCopiedFeedback ? 'URL copied!' : "Copy the URL to save or share your pull" }}
+        {{ showCopiedFeedback ? 'URL copied!' : "Share" }}
+      </a>
+      <a
+        v-if="hasCards"
+        href="#"
+        class="start-over-link"
+        @click.prevent="$emit('new-pull')"
+      >
+        Start again
       </a>
     </div>
   `,
