@@ -1,13 +1,12 @@
-/* Google Fonts Import */
 @import url(https://fonts.googleapis.com/css?family=Roboto:400,900);
 
-/* CSS Custom Properties */
 :root {
     /* Colors */
     --primary-color: #2c3e50;
     --secondary-color: #34495e;
     --text-color: #333;
     --text-light: #666;
+    --text-inverted: white;
     --link-color: #000;
     --muted-color: #6c757d;
     --muted-dark: #495057;
@@ -15,7 +14,7 @@
     --border-color: #dee2e6;
     --border-muted: #adb5bd;
     --border-light: #ddd;
-    --white: white;
+    --bg-color: white;
 
     /* Spacing */
     --spacing-xs: 0.25rem;
@@ -59,7 +58,7 @@
     --shadow-modal: 0 10px 30px rgba(0, 0, 0, 0.3);
     --shadow-card: 0 4px 8px rgba(0, 0, 0, 0.3);
     --shadow-hover: 0 6px 12px rgba(0, 0, 0, 0.3);
-    --shadow-streaming-active: 0 2px 4px rgba(73, 80, 87, 0.3);
+    --shadow-streaming: 0 2px 4px rgba(73, 80, 87, 0.3);
 
     /* Z-index */
     --z-modal: 1000;
@@ -79,7 +78,7 @@ body {
     font-family: var(--font-family);
     line-height: var(--line-height);
     color: var(--text-color);
-    background-color: var(--white);
+    background-color: var(--bg-color);
 }
 
 .container {
@@ -176,7 +175,7 @@ body {
     height: var(--streaming-btn-size);
     border: 1px solid var(--border-color);
     border-radius: var(--radius-sm);
-    background: var(--white);
+    background: var(--bg-color);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -194,8 +193,8 @@ body {
 .streaming-icon-btn.active {
     background: var(--muted-dark);
     border-color: var(--muted-dark);
-    color: var(--white);
-    box-shadow: var(--shadow-streaming-active);
+    color: var(--text-inverted);
+    box-shadow: var(--shadow-streaming);
 }
 
 .streaming-icon-btn i {
@@ -316,7 +315,7 @@ body {
     left: 50%;
     transform: translateX(-50%);
     background: var(--primary-color);
-    color: var(--white);
+    color: var(--text-inverted);
     padding: 4px 8px;
     border-radius: var(--radius-sm);
     font-size: var(--font-xs);
@@ -359,7 +358,7 @@ body {
 }
 
 .modal-content {
-    background: var(--white);
+    background: var(--bg-color);
     border-radius: var(--radius-xl);
     padding: var(--spacing-xl);
     max-width: var(--instructions-max-width);
