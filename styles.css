@@ -87,7 +87,6 @@ body {
     padding: var(--spacing-md);
 }
 
-/* Main content layout - mobile first */
 .main-content {
     display: grid;
     gap: var(--spacing-md);
@@ -95,7 +94,6 @@ body {
     align-items: start;
 }
 
-/* Main title in content area */
 .main-title {
     font-size: var(--font-2xl);
     font-family: var(--heading-font-family);
@@ -105,7 +103,6 @@ body {
     margin: 0 0 var(--spacing-md) 0;
 }
 
-/* Deck component - always sticky sidebar */
 .deck-container {
     position: sticky;
     top: var(--spacing-md);
@@ -139,10 +136,9 @@ body {
     cursor: not-allowed;
 }
 
-/* Card grid - mobile first */
 .card-grid {
     display: grid;
-    grid-template-columns: 1fr; /* Mobile first - single column */
+    grid-template-columns: 1fr;
     gap: var(--spacing-lg);
 }
 
@@ -150,7 +146,6 @@ body {
     max-width: var(--instructions-max-width);
 }
 
-/* Streaming selector in sidebar */
 .streaming-selector {
     text-align: center;
     margin: var(--spacing-sm) 0;
@@ -201,7 +196,6 @@ body {
     font-size: var(--font-lg);
 }
 
-/* Action icons */
 .action-icons {
     display: flex;
     gap: var(--spacing-xs);
@@ -231,7 +225,6 @@ body {
     font-size: var(--font-lg);
 }
 
-/* Clickable card behavior */
 .clickable-card {
     cursor: pointer;
     text-decoration: none;
@@ -243,7 +236,6 @@ body {
     color: inherit;
 }
 
-/* Image hover effect */
 .clickable-card:hover .card-image {
     transform: translateY(-4px);
 }
@@ -252,7 +244,6 @@ body {
     transform: translateY(-2px);
 }
 
-/* Clickable title behavior */
 .clickable-title {
     cursor: pointer;
     text-decoration: none;
@@ -281,7 +272,6 @@ body {
     margin-bottom: var(--spacing-sm);
     transition: transform var(--transition);
 
-    /* Show card back while image loads */
     background-image: url('./cards/back.jpg');
     background-size: cover;
     background-position: center;
@@ -304,7 +294,6 @@ body {
     white-space: nowrap;
 }
 
-/* Share button with tooltip */
 .share-button-container {
     position: relative;
 }
@@ -342,7 +331,6 @@ body {
     100% { opacity: 0; transform: translateX(-50%) translateY(-4px); }
 }
 
-/* Modal styles */
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -412,22 +400,16 @@ body {
     max-width: 100%;
 }
 
-/* ========================================
-   RESPONSIVE MEDIA QUERIES (Mobile-First)
-   ======================================== */
-
-/* Tablet breakpoint (481px and up) */
 @media (min-width: 481px) {
     .main-content {
         gap: var(--spacing-lg);
     }
 
     .card-grid {
-        grid-template-columns: repeat(auto-fill, minmax(calc(var(--card-width) + 20px), 1fr)); /* Auto-fill with card width + padding */
+        grid-template-columns: repeat(auto-fill, minmax(calc(var(--card-width) + 20px), 1fr));
     }
 }
 
-/* Desktop breakpoint (768px and up) */
 @media (min-width: 768px) {
     :root {
         --card-width: 140px;
@@ -438,11 +420,10 @@ body {
     }
 
     .streaming-icons {
-        grid-template-columns: repeat(4, 1fr); /* 4 streaming icons across */
+        grid-template-columns: repeat(4, 1fr);
     }
 }
 
-/* Large desktop breakpoint (1025px and up) */
 @media (min-width: 1025px) {
     :root {
         --card-width: 180px;

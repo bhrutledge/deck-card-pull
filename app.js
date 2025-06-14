@@ -1,6 +1,5 @@
 const { createApp, ref, computed, onMounted, watch } = Vue;
 
-// Complete DECK data structure with all 54 cards and streaming links
 const DECK = {
   // Diamonds
   "AD": {
@@ -391,10 +390,9 @@ const DECK = {
   }
 };
 
-// Deck Component
 const DeckComponent = {
   props: ['remainingCards', 'isDisabled', 'hasCards', 'streamingPreference'],
-  emits: ['draw-card', 'new-pull', 'update-preference'],  template: `
+  emits: ['draw-card', 'new-pull', 'update-preference'], template: /* html */`
     <div class="deck-container">
       <div
         class="deck"
@@ -505,10 +503,9 @@ const DeckComponent = {
   }
 };
 
-// Card List Component
 const CardList = {
   props: ['drawnCards', 'getPreferredStreamingUrl', 'streamingPreference'],
-  template: `
+  template: /*html */`
     <div>
       <div class="card-grid" v-if="drawnCards.length > 0">
         <a
@@ -574,7 +571,6 @@ const CardList = {
   }
 };
 
-// Main Vue App
 const App = {
   components: {
     DeckComponent,
@@ -583,9 +579,8 @@ const App = {
   setup() {
     const drawnCards = ref([]);
     const cardListRef = ref(null);
-    const streamingPreference = ref('bandcamp'); // Default to Bandcamp
+    const streamingPreference = ref('bandcamp');
 
-    // Get all available card codes
     const allCardCodes = Object.keys(DECK);
 
     const remainingCards = computed(() => {
@@ -596,7 +591,6 @@ const App = {
       return drawnCards.value.length > 0;
     });
 
-    // Load streaming preference from localStorage
     const loadStreamingPreference = () => {
       try {
         const saved = localStorage.getItem('streamingPreference');
@@ -608,7 +602,6 @@ const App = {
       }
     };
 
-    // Save streaming preference to localStorage
     const saveStreamingPreference = (preference) => {
       try {
         streamingPreference.value = preference;
@@ -618,7 +611,6 @@ const App = {
       }
     };
 
-    // Get URL for preferred streaming service
     const getPreferredStreamingUrl = (card) => {
       const urlMap = {
         'spotify': card.spotify,
@@ -629,7 +621,6 @@ const App = {
       return urlMap[streamingPreference.value] || card.bandcamp || card.spotify || card.appleMusic || card.youTubeMusic;
     };
 
-    // Update URL parameters
     const updateURL = () => {
       try {
         const url = new URL(window.location);
@@ -648,7 +639,6 @@ const App = {
       }
     };
 
-    // Load pull from URL or card codes
     const loadPullFromCodes = (cardCodes) => {
       const validCards = cardCodes
         .filter(code => DECK[code])
@@ -660,7 +650,6 @@ const App = {
       drawnCards.value = validCards;
     };
 
-    // Load pull from URL parameters
     const loadFromURL = () => {
       try {
         const url = new URL(window.location);
@@ -698,7 +687,6 @@ const App = {
       }
     };
 
-    // Draw a random card
     const drawCard = () => {
       try {
         if (drawnCards.value.length >= 13) return;
@@ -730,11 +718,9 @@ const App = {
         }, 100);
       } catch (error) {
         console.error('Error drawing card:', error);
-        // Don't reset the app, just log the error
       }
     };
 
-    // Start a new pull
     const startNewPull = () => {
       drawnCards.value = [];
     };
@@ -750,7 +736,6 @@ const App = {
       }, 300); // Throttle URL updates
     }, { deep: true });
 
-    // Initialize on mount
     onMounted(() => {
       loadFromURL();
       loadStreamingPreference();
@@ -770,20 +755,16 @@ const App = {
   }
 };
 
-// Create and mount the app
 const app = createApp(App);
 
-// Add global error handler
 app.config.errorHandler = (err, instance, info) => {
   console.error('Vue error:', err);
   console.error('Error info:', info);
-  // Don't let errors crash the app
 };
 
-// Handle unhandled promise rejections
 window.addEventListener('unhandledrejection', event => {
   console.error('Unhandled promise rejection:', event.reason);
-  event.preventDefault(); // Prevent the default browser behavior
+  event.preventDefault();
 });
 
 app.mount('#app');
