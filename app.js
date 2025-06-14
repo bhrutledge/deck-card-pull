@@ -1,6 +1,6 @@
 const { createApp, ref, computed, onMounted, watch } = Vue;
 
-// Complete DECK data structure with all 54 cards and Bandcamp links
+// Complete DECK data structure with all 54 cards and streaming links
 const DECK = {
   // Diamonds
   "AD": {
@@ -61,7 +61,7 @@ const DECK = {
   },
   "9D": {
     title: "Old Feelings, New England (9 of Diamonds)",
-    bandcamp: "https://hallelujathehills.bandcamp.com/track/old-feelings-new-england-9-of-diamonds",
+    bandcamp: "https://hallelujahthehills.bandcamp.com/track/old-feelings-new-england-9-of-diamonds",
     spotify: "https://open.spotify.com/track/6JjAbYFyXPVbRSRL0deeba",
     appleMusic: "https://music.apple.com/us/song/old-feelings-new-england-9-of-diamonds-feat-tanya-donelly/1800133029",
     youTubeMusic: "https://music.youtube.com/watch?v=UBbltT4fGRY"
@@ -393,39 +393,65 @@ const DECK = {
 
 // Deck Component
 const DeckComponent = {
-  props: ['remainingCards', 'isDisabled', 'hasCards'],
-  emits: ['draw-card', 'new-pull'],
-  template: `
+  props: ['remainingCards', 'isDisabled', 'hasCards', 'streamingPreference'],
+  emits: ['draw-card', 'new-pull', 'update-preference'],  template: `
     <div class="deck-container">
-      <h2 class="deck-title">The DECK deck</h2>
       <div
         class="deck"
         :class="{ disabled: isDisabled }"
         @click="handleDeckClick"
       >
       </div>
-      <a
-        v-if="hasCards"
-        href="#"
-        class="copy-link"
-        @click.prevent="copyUrlToClipboard"
-        :class="{ 'copied': showCopiedFeedback }"
-      >
-        {{ showCopiedFeedback ? 'URL copied!' : "Share" }}
-      </a>
-      <a
-        v-if="hasCards"
-        href="#"
-        class="start-over-link"
-        @click.prevent="$emit('new-pull')"
-      >
-        Start again
-      </a>
+
+      <div v-if="hasCards" class="deck-controls">
+        <div class="action-icons">
+          <div class="share-button-container">
+            <button
+              class="action-icon-btn"
+              @click="copyUrlToClipboard"
+              title="Copy link to share"
+            >
+              <i class="fas fa-link"></i>
+            </button>
+            <div v-if="showCopiedFeedback" class="copy-tooltip">
+              Link copied!
+            </div>
+          </div>
+          <button
+            class="action-icon-btn"
+            @click="$emit('new-pull')"
+            title="Start again"
+          >
+            <i class="fas fa-redo"></i>
+          </button>
+        </div>
+        <div class="streaming-selector">
+          <div class="streaming-label">Open songs on:</div>
+          <div class="streaming-icons">
+            <button
+              v-for="service in services"
+              :key="service.value"
+              class="streaming-icon-btn"
+              :class="{ active: streamingPreference === service.value }"
+              @click="$emit('update-preference', service.value)"
+              :title="service.name"
+            >
+              <i :class="service.icon"></i>
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   `,
   data() {
     return {
-      showCopiedFeedback: false
+      showCopiedFeedback: false,
+      services: [
+        { value: 'bandcamp', name: 'Bandcamp', icon: 'fab fa-bandcamp' },
+        { value: 'spotify', name: 'Spotify', icon: 'fab fa-spotify' },
+        { value: 'appleMusic', name: 'Apple Music', icon: 'fab fa-apple' },
+        { value: 'youTubeMusic', name: 'YouTube Music', icon: 'fab fa-youtube' }
+      ]
     };
   },
   methods: {
@@ -461,15 +487,19 @@ const DeckComponent = {
 
 // Card List Component
 const CardList = {
-  props: ['drawnCards'],
+  props: ['drawnCards', 'getPreferredStreamingUrl', 'streamingPreference'],
   template: `
     <div>
       <div class="card-grid" v-if="drawnCards.length > 0">
-        <div
+        <a
           v-for="(card, index) in drawnCards"
           :key="card.code"
-          class="card-grid-item"
+          class="card-grid-item clickable-card"
           :ref="'card-' + index"
+          :href="getPreferredStreamingUrl(card)"
+          target="_blank"
+          rel="noopener noreferrer"
+          :title="getCardTitle(card)"
         >
           <img
             :src="'./cards/' + card.code + '.jpg'"
@@ -477,54 +507,12 @@ const CardList = {
             class="card-image"
           />
           <div class="card-content">
-            <div class="card-title">
+            <div class="card-title clickable-title">
               {{ index + 1 }}. {{ getSongName(card.title) }}
               <span class="card-name">{{ getCardName(card.title) }}</span>
             </div>
-            <div class="card-links">
-              <a
-                v-if="card.bandcamp"
-                :href="card.bandcamp"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="music-link bandcamp-link"
-                title="Listen on Bandcamp"
-              >
-                <i class="fab fa-bandcamp"></i>
-              </a>
-              <a
-                v-if="card.spotify"
-                :href="card.spotify"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="music-link spotify-link"
-                title="Listen on Spotify"
-              >
-                <i class="fab fa-spotify"></i>
-              </a>
-              <a
-                v-if="card.appleMusic"
-                :href="card.appleMusic"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="music-link apple-music-link"
-                title="Listen on Apple Music"
-              >
-                <i class="fab fa-apple"></i>
-              </a>
-              <a
-                v-if="card.youTubeMusic"
-                :href="card.youTubeMusic"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="music-link youtube-music-link"
-                title="Listen on YouTube Music"
-              >
-                <i class="fab fa-youtube"></i>
-              </a>
-            </div>
           </div>
-        </div>
+        </a>
       </div>
     </div>
   `,
@@ -536,6 +524,16 @@ const CardList = {
     getCardName(title) {
       const parenIndex = title.lastIndexOf('(');
       return parenIndex !== -1 ? ' ' + title.substring(parenIndex) : '';
+    },
+    getCardTitle(card) {
+      const serviceNames = {
+        'bandcamp': 'Bandcamp',
+        'spotify': 'Spotify',
+        'appleMusic': 'Apple Music',
+        'youTubeMusic': 'YouTube Music'
+      };
+      const serviceName = serviceNames[this.streamingPreference] || 'your preferred streaming service';
+      return `Open on ${serviceName}`;
     },
     scrollToLatestCard() {
       this.$nextTick(() => {
@@ -610,6 +608,70 @@ const PullMenu = {
   }
 };
 
+// Streaming Settings Component
+const StreamingSettings = {
+  props: ['streamingPreference'],
+  emits: ['update-preference'],
+  data() {
+    return {
+      isOpen: false,
+      services: [
+        { value: 'spotify', name: 'Spotify', icon: 'fab fa-spotify' },
+        { value: 'appleMusic', name: 'Apple Music', icon: 'fab fa-apple' },
+        { value: 'youTubeMusic', name: 'YouTube Music', icon: 'fab fa-youtube' },
+        { value: 'bandcamp', name: 'Bandcamp', icon: 'fab fa-bandcamp' }
+      ]
+    };
+  },
+  template: `
+    <div class="streaming-settings">
+      <button
+        class="settings-button"
+        @click="isOpen = !isOpen"
+        title="Choose your preferred streaming service"
+      >
+        <i class="fas fa-music"></i> Streaming Service
+      </button>
+
+      <div v-if="isOpen" class="settings-dropdown">
+        <div class="settings-header">
+          <h3>Preferred Streaming Service</h3>
+          <p>Cards will open in your preferred service when clicked</p>
+        </div>
+        <div class="service-options">
+          <button
+            v-for="service in services"
+            :key="service.value"
+            class="service-option"
+            :class="{ active: streamingPreference === service.value }"
+            @click="selectService(service.value)"
+          >
+            <i :class="service.icon"></i>
+            {{ service.name }}
+          </button>
+        </div>
+      </div>
+    </div>
+  `,
+  methods: {
+    selectService(service) {
+      this.$emit('update-preference', service);
+      this.isOpen = false;
+    },
+    handleClickOutside(e) {
+      if (!this.$el.contains(e.target)) {
+        this.isOpen = false;
+      }
+    }
+  },
+  mounted() {
+    document.addEventListener('click', this.handleClickOutside);
+  },
+  unmounted() {
+    document.removeEventListener('click', this.handleClickOutside);
+  }
+};
+
 // Main Vue App
 const App = {
   components: {
@@ -621,6 +683,7 @@ const App = {
     const drawnCards = ref([]);
     const savedPulls = ref([]);
     const cardListRef = ref(null);
+    const streamingPreference = ref('bandcamp'); // Default to Bandcamp
 
     // Get all available card codes
     const allCardCodes = Object.keys(DECK);
@@ -632,6 +695,39 @@ const App = {
     const hasCards = computed(() => {
       return drawnCards.value.length > 0;
     });
+
+    // Load streaming preference from localStorage
+    const loadStreamingPreference = () => {
+      try {
+        const saved = localStorage.getItem('streamingPreference');
+        if (saved && ['spotify', 'appleMusic', 'youTubeMusic', 'bandcamp'].includes(saved)) {
+          streamingPreference.value = saved;
+        }
+      } catch (error) {
+        console.error('Error loading streaming preference:', error);
+      }
+    };
+
+    // Save streaming preference to localStorage
+    const saveStreamingPreference = (preference) => {
+      try {
+        streamingPreference.value = preference;
+        localStorage.setItem('streamingPreference', preference);
+      } catch (error) {
+        console.error('Error saving streaming preference:', error);
+      }
+    };
+
+    // Get URL for preferred streaming service
+    const getPreferredStreamingUrl = (card) => {
+      const urlMap = {
+        'spotify': card.spotify,
+        'appleMusic': card.appleMusic,
+        'youTubeMusic': card.youTubeMusic,
+        'bandcamp': card.bandcamp
+      };
+      return urlMap[streamingPreference.value] || card.bandcamp || card.spotify || card.appleMusic || card.youTubeMusic;
+    };
 
     // Load saved pulls from localStorage
     const loadSavedPulls = () => {
@@ -829,6 +925,7 @@ const App = {
     onMounted(() => {
       loadSavedPulls();
       loadFromURL();
+      loadStreamingPreference();
     });
 
     return {
@@ -839,7 +936,10 @@ const App = {
       drawCard,
       startNewPull,
       loadPull,
-      cardListRef
+      cardListRef,
+      streamingPreference,
+      saveStreamingPreference,
+      getPreferredStreamingUrl
     };
   }
 };

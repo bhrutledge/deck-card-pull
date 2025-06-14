@@ -26,6 +26,15 @@ body {
     align-items: start;
 }
 
+/* Main title in content area */
+.main-title {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #2c3e50;
+    text-align: center;
+    margin: 0 0 2rem 0;
+}
+
 /* Deck component - always sticky sidebar */
 .deck-container {
     position: sticky;
@@ -103,7 +112,6 @@ body {
 
 .main-instructions {
     max-width: 30rem;
-    margin: 2rem auto;
 }
 
 .copy-link {
@@ -121,6 +129,148 @@ body {
 
 .copy-link.copied {
     color: #27ae60;
+}
+
+/* Header styles */
+.header {
+    display: flex;
+    justify-content: flex-end;
+    padding: 1rem 0;
+    margin-bottom: 1rem;
+}
+
+
+
+/* Deck container controls */
+.deck-controls {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    width: 100%;
+}
+
+/* Streaming selector in sidebar */
+.streaming-selector {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    width: 100%;
+}
+
+.streaming-label {
+    font-size: 0.9rem;
+    color: #2c3e50;
+}
+
+.streaming-icons {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+    justify-items: center;
+    max-width: fit-content;
+    margin: 0 auto;
+}
+
+/* For wider sidebars, use 4 across */
+@media (min-width: 769px) {
+    .streaming-icons {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+.streaming-icon-btn {
+    width: 36px;
+    height: 36px;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: #6c757d;
+}
+
+.streaming-icon-btn:hover {
+    background: #f8f9fa;
+    border-color: #adb5bd;
+    color: #495057;
+}
+
+.streaming-icon-btn.active {
+    background: #495057;
+    border-color: #495057;
+    color: white;
+    box-shadow: 0 2px 4px rgba(73, 80, 87, 0.3);
+}
+
+.streaming-icon-btn i {
+    font-size: 1.1rem;
+}
+
+/* Action icons */
+.action-icons {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+}
+
+.action-icon-btn {
+    width: 36px;
+    height: 36px;
+    border: none;
+    border-radius: 6px;
+    background: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: #6c757d;
+}
+
+.action-icon-btn:hover {
+    background: #f8f9fa;
+    color: #495057;
+}
+
+.action-icon-btn i {
+    font-size: 1.1rem;
+}
+
+/* Clickable card behavior */
+.clickable-card {
+    cursor: pointer;
+    text-decoration: none;
+    color: inherit;
+}
+
+.clickable-card:hover {
+    text-decoration: none;
+    color: inherit;
+}
+
+/* Image hover effect */
+.clickable-card:hover .card-image {
+    transform: translateY(-4px);
+}
+
+.clickable-card:active .card-image {
+    transform: translateY(-2px);
+}
+
+/* Clickable title behavior */
+.clickable-title {
+    cursor: pointer;
+    text-decoration: none;
+    transition: text-decoration 0.2s ease;
+}
+
+.clickable-card:hover .clickable-title {
+    text-decoration: underline;
 }
 
 /* Mobile adjustments */
@@ -161,6 +311,18 @@ body {
         width: 20px;
         height: 20px;
         font-size: 12px;
+    }
+
+    .header {
+        padding: 0.5rem 0;
+        margin-bottom: 0.5rem;
+    }
+
+    .settings-dropdown {
+        right: -1rem;
+        left: -1rem;
+        width: calc(100vw - 2rem);
+        min-width: unset;
     }
 }
 
@@ -216,6 +378,7 @@ body {
     border-radius: 4px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
     margin-bottom: 0.5rem;
+    transition: transform 0.2s ease;
 }
 
 .card-content {
@@ -357,6 +520,44 @@ body {
     color: #666;
     font-style: italic;
     text-align: center;
+}
+
+/* Share button with tooltip */
+.share-button-container {
+    position: relative;
+}
+
+.copy-tooltip {
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #2c3e50;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    white-space: nowrap;
+    margin-bottom: 4px;
+    opacity: 1;
+    animation: tooltipFade 2s ease-in-out;
+}
+
+.copy-tooltip::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 4px solid transparent;
+    border-top-color: #2c3e50;
+}
+
+@keyframes tooltipFade {
+    0% { opacity: 0; transform: translateX(-50%) translateY(4px); }
+    10% { opacity: 1; transform: translateX(-50%) translateY(0); }
+    90% { opacity: 1; transform: translateX(-50%) translateY(0); }
+    100% { opacity: 0; transform: translateX(-50%) translateY(-4px); }
 }
 
 /* Responsive design */
