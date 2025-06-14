@@ -424,6 +424,13 @@ const DeckComponent = {
           >
             <i class="fas fa-redo"></i>
           </button>
+          <button
+            class="action-icon-btn"
+            @click="showInfoModal = true"
+            title="About DECK"
+          >
+            <i class="fas fa-question"></i>
+          </button>
         </div>
         <div class="streaming-selector">
           <div class="streaming-label">Open songs on:</div>
@@ -442,10 +449,23 @@ const DeckComponent = {
         </div>
       </div>
     </div>
+
+    <!-- Info Modal -->
+    <div v-if="showInfoModal" class="modal-overlay" @click="showInfoModal = false">
+      <div class="modal-content" @click.stop>
+        <button class="modal-close" @click="showInfoModal = false">
+          <i class="fas fa-times"></i>
+        </button>
+        <p><a href="https://www.hallelujahthehills.com/music/deck/" target="_blank" rel="noopener noreferrer">DECK</a> is 3.5+ hours of music from Hallelujah The Hills. DECK is 4 albums released in one day. DECK is an actual deck of playing cards with a visual design meant to reflect the song it corresponds to. DECK is an invitation to listeners to craft their own musical/visual experience however they wish to do so.</p>
+        <img src="https://res.cloudinary.com/dgojqlr7m/image/fetch/c_fill,w_360/https://res.cloudinary.com/dgojqlr7m/image/upload/v1742949999/DECK_4_panel.jpg" alt="DECK Album Art">
+        <p>All artwork by Ryan H. Walsh.</p>
+        </div>
+    </div>
   `,
   data() {
     return {
       showCopiedFeedback: false,
+      showInfoModal: false,
       services: [
         { value: 'bandcamp', name: 'Bandcamp', icon: 'fab fa-bandcamp' },
         { value: 'spotify', name: 'Spotify', icon: 'fab fa-spotify' },
