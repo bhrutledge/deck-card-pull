@@ -16,8 +16,6 @@
     --border-muted: #adb5bd;
     --border-light: #ddd;
     --white: white;
-    --info-bg: #e3f2fd;
-    --info-color: #1976d2;
 
     /* Spacing */
     --spacing-xs: 0.25rem;
@@ -52,21 +50,15 @@
     --streaming-btn-size: 28px;
     --action-btn-size: 36px;
     --modal-close-size: 24px;
-    --service-icon-width: 20px;
-    --dropdown-min-width: 200px;
-    --settings-dropdown-min-width: 250px;
 
     /* Transitions */
     --transition: 0.2s ease;
 
     /* Shadows */
     --shadow-light: rgba(0, 0, 0, 0.2);
-    --shadow-medium: rgba(0, 0, 0, 0.3);
-    --shadow-streaming: rgba(73, 80, 87, 0.3);
     --shadow-modal: 0 10px 30px rgba(0, 0, 0, 0.3);
     --shadow-card: 0 4px 8px rgba(0, 0, 0, 0.3);
     --shadow-hover: 0 6px 12px rgba(0, 0, 0, 0.3);
-    --shadow-dropdown: 0 4px 8px rgba(0, 0, 0, 0.1);
     --shadow-streaming-active: 0 2px 4px rgba(73, 80, 87, 0.3);
 
     /* Z-index */
@@ -311,135 +303,6 @@ body {
 
 .card-name {
     white-space: nowrap;
-}
-
-/* Pull menu */
-.pull-menu {
-    position: relative;
-}
-
-.pull-menu-button {
-    background: var(--secondary-color);
-    color: var(--white);
-    border: none;
-    padding: var(--spacing-sm) var(--spacing-md);
-    border-radius: var(--radius-sm);
-    cursor: pointer;
-    font-size: var(--font-sm);
-}
-
-.pull-menu-button:hover {
-    background: var(--primary-color);
-}
-
-.pull-menu-dropdown {
-    position: absolute;
-    top: 100%;
-    right: 0;
-    background: var(--white);
-    border: 1px solid var(--border-light);
-    border-radius: var(--radius-sm);
-    box-shadow: var(--shadow-dropdown);
-    min-width: var(--dropdown-min-width);
-    z-index: var(--z-modal);
-}
-
-.pull-menu-item {
-    display: block;
-    width: 100%;
-    padding: 0.75rem var(--spacing-md);
-    border: none;
-    background: none;
-    text-align: left;
-    cursor: pointer;
-    border-bottom: 1px solid var(--border-light);
-    color: var(--text-color);
-}
-
-.pull-menu-item:hover {
-    background: var(--light-gray);
-}
-
-.pull-menu-item:last-child {
-    border-bottom: none;
-}
-
-.no-pulls {
-    padding: var(--spacing-md);
-    color: var(--text-light);
-    font-style: italic;
-    text-align: center;
-}
-
-/* Streaming settings */
-.streaming-settings {
-    position: relative;
-}
-
-.settings-button {
-    background: var(--secondary-color);
-    color: var(--white);
-    border: none;
-    padding: var(--spacing-sm) var(--spacing-md);
-    border-radius: var(--radius-sm);
-    cursor: pointer;
-    font-size: var(--font-sm);
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-sm);
-}
-
-.settings-button:hover {
-    background: var(--primary-color);
-}
-
-.settings-dropdown {
-    position: absolute;
-    top: 100%;
-    right: 0;
-    background: var(--white);
-    border: 1px solid var(--border-light);
-    border-radius: var(--radius-sm);
-    box-shadow: var(--shadow-dropdown);
-    min-width: var(--settings-dropdown-min-width);
-    z-index: var(--z-modal);
-    padding: var(--spacing-md);
-}
-
-.settings-header {
-    font-weight: bold;
-    margin-bottom: var(--spacing-sm);
-    color: var(--primary-color);
-}
-
-.service-options {
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-sm);
-}
-
-.service-option {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    padding: var(--spacing-sm);
-    border-radius: var(--radius-sm);
-    cursor: pointer;
-    transition: background-color var(--transition);
-}
-
-.service-option:hover {
-    background: var(--light-gray);
-}
-
-.service-option.active {
-    background: var(--info-bg);
-    color: var(--info-color);
-}
-
-.service-option i {
-    width: var(--service-icon-width);
-    text-align: center;
 }
 
 /* Share button with tooltip */

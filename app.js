@@ -574,134 +574,14 @@ const CardList = {
   }
 };
 
-// Pull Menu Component
-const PullMenu = {
-  props: ['savedPulls'],
-  emits: ['load-pull'],
-  data() {
-    return {
-      isOpen: false
-    };
-  },
-  template: `
-    <div class="pull-menu">
-      <button
-        class="pull-menu-button"
-        @click="isOpen = !isOpen"
-      >
-        Previous Pulls ({{ savedPulls.length }})
-      </button>
-
-      <div v-if="isOpen" class="pull-menu-dropdown">
-        <div v-if="savedPulls.length === 0" class="no-pulls">
-          No saved pulls yet
-        </div>
-        <button
-          v-for="pull in savedPulls"
-          :key="pull.id"
-          class="pull-menu-item"
-          @click="loadPull(pull)"
-        >
-          {{ pull.cardCount }} cards on {{ pull.dateString }}
-        </button>
-      </div>
-    </div>
-  `,
-  methods: {
-    loadPull(pull) {
-      this.$emit('load-pull', pull);
-      this.isOpen = false;
-    },
-    handleClickOutside(e) {
-      if (!this.$el.contains(e.target)) {
-        this.isOpen = false;
-      }
-    }
-  },
-  mounted() {
-    // Close dropdown when clicking outside
-    document.addEventListener('click', this.handleClickOutside);
-  },
-  unmounted() {
-    // Clean up event listener to prevent memory leaks
-    document.removeEventListener('click', this.handleClickOutside);
-  }
-};
-
-// Streaming Settings Component
-const StreamingSettings = {
-  props: ['streamingPreference'],
-  emits: ['update-preference'],
-  data() {
-    return {
-      isOpen: false,
-      services: [
-        { value: 'spotify', name: 'Spotify', icon: 'fab fa-spotify' },
-        { value: 'appleMusic', name: 'Apple Music', icon: 'fab fa-apple' },
-        { value: 'youTubeMusic', name: 'YouTube Music', icon: 'fab fa-youtube' },
-        { value: 'bandcamp', name: 'Bandcamp', icon: 'fab fa-bandcamp' }
-      ]
-    };
-  },
-  template: `
-    <div class="streaming-settings">
-      <button
-        class="settings-button"
-        @click="isOpen = !isOpen"
-        title="Choose your preferred streaming service"
-      >
-        <i class="fas fa-music"></i> Streaming Service
-      </button>
-
-      <div v-if="isOpen" class="settings-dropdown">
-        <div class="settings-header">
-          <h3>Preferred Streaming Service</h3>
-          <p>Cards will open in your preferred service when clicked</p>
-        </div>
-        <div class="service-options">
-          <button
-            v-for="service in services"
-            :key="service.value"
-            class="service-option"
-            :class="{ active: streamingPreference === service.value }"
-            @click="selectService(service.value)"
-          >
-            <i :class="service.icon"></i>
-            {{ service.name }}
-          </button>
-        </div>
-      </div>
-    </div>
-  `,
-  methods: {
-    selectService(service) {
-      this.$emit('update-preference', service);
-      this.isOpen = false;
-    },
-    handleClickOutside(e) {
-      if (!this.$el.contains(e.target)) {
-        this.isOpen = false;
-      }
-    }
-  },
-  mounted() {
-    document.addEventListener('click', this.handleClickOutside);
-  },
-  unmounted() {
-    document.removeEventListener('click', this.handleClickOutside);
-  }
-};
-
 // Main Vue App
 const App = {
   components: {
     DeckComponent,
-    CardList,
-    PullMenu
+    CardList
   },
   setup() {
     const drawnCards = ref([]);
-    const savedPulls = ref([]);
     const cardListRef = ref(null);
     const streamingPreference = ref('bandcamp'); // Default to Bandcamp
 
@@ -747,69 +627,6 @@ const App = {
         'bandcamp': card.bandcamp
       };
       return urlMap[streamingPreference.value] || card.bandcamp || card.spotify || card.appleMusic || card.youTubeMusic;
-    };
-
-    // Load saved pulls from localStorage
-    const loadSavedPulls = () => {
-      try {
-        const saved = localStorage.getItem('deckPulls');
-        if (saved) {
-          savedPulls.value = JSON.parse(saved);
-        }
-      } catch (error) {
-        console.error('Error loading saved pulls:', error);
-      }
-    };
-
-    // Save pulls to localStorage
-    const savePullsToStorage = () => {
-      try {
-        const dataSize = JSON.stringify(savedPulls.value).length;
-        if (dataSize > 1000000) { // 1MB limit
-          console.warn('Saved pulls data is getting large, trimming...');
-          savedPulls.value = savedPulls.value.slice(0, 10); // Keep only 10 most recent
-        }
-        localStorage.setItem('deckPulls', JSON.stringify(savedPulls.value));
-      } catch (error) {
-        console.error('Error saving pulls:', error);
-        if (error.name === 'QuotaExceededError') {
-          // Clear old data and try again
-          console.warn('Storage quota exceeded, clearing old pulls...');
-          savedPulls.value = savedPulls.value.slice(0, 5);
-          try {
-            localStorage.setItem('deckPulls', JSON.stringify(savedPulls.value));
-          } catch (secondError) {
-            console.error('Still unable to save after cleanup:', secondError);
-          }
-        }
-      }
-    };
-
-    // Save current pull
-    const saveCurrentPull = () => {
-      if (drawnCards.value.length === 0) return;
-
-      const pull = {
-        id: Date.now(),
-        cardCodes: drawnCards.value.map(card => card.code),
-        cardCount: drawnCards.value.length,
-        timestamp: Date.now(),
-        dateString: new Date().toLocaleDateString('en-US', {
-          month: 'numeric',
-          day: 'numeric',
-          year: '2-digit'
-        })
-      };
-
-      // Add to beginning of array (most recent first)
-      savedPulls.value.unshift(pull);
-
-      // Keep only last 20 pulls
-      if (savedPulls.value.length > 20) {
-        savedPulls.value = savedPulls.value.slice(0, 20);
-      }
-
-      savePullsToStorage();
     };
 
     // Update URL parameters
@@ -919,15 +736,7 @@ const App = {
 
     // Start a new pull
     const startNewPull = () => {
-      if (drawnCards.value.length > 0) {
-        saveCurrentPull();
-      }
       drawnCards.value = [];
-    };
-
-    // Load a saved pull
-    const loadPull = (pull) => {
-      loadPullFromCodes(pull.cardCodes);
     };
 
     // Watch for changes to update URL (with throttling to prevent excessive updates)
@@ -943,19 +752,16 @@ const App = {
 
     // Initialize on mount
     onMounted(() => {
-      loadSavedPulls();
       loadFromURL();
       loadStreamingPreference();
     });
 
     return {
       drawnCards,
-      savedPulls,
       remainingCards,
       hasCards,
       drawCard,
       startNewPull,
-      loadPull,
       cardListRef,
       streamingPreference,
       saveStreamingPreference,
