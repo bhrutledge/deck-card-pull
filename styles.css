@@ -45,6 +45,7 @@
     /* Dimensions */
     --container-max-width: 1400px;
     --card-width: 120px;
+    --card-container-width: calc(var(--card-width) + var(--spacing-md));
     --instructions-max-width: 30rem;
     --streaming-btn-size: 28px;
     --action-btn-size: 36px;
@@ -54,10 +55,9 @@
     --transition: 0.2s ease;
 
     /* Shadows */
-    --shadow-light: rgba(0, 0, 0, 0.2);
-    --shadow-modal: 0 10px 30px rgba(0, 0, 0, 0.3);
     --shadow-card: 0 4px 8px rgba(0, 0, 0, 0.3);
-    --shadow-hover: 0 6px 12px rgba(0, 0, 0, 0.3);
+    --shadow-card-hover: 0 6px 12px rgba(0, 0, 0, 0.3);
+    --shadow-modal: 0 10px 30px rgba(0, 0, 0, 0.3);
     --shadow-streaming: 0 2px 4px rgba(73, 80, 87, 0.3);
 
     /* Z-index */
@@ -90,7 +90,7 @@ body {
 .main-content {
     display: grid;
     gap: var(--spacing-md);
-    grid-template-columns: var(--card-width) 1fr;
+    grid-template-columns: var(--card-container-width) 1fr;
     align-items: start;
 }
 
@@ -121,14 +121,14 @@ body {
     background-position: center;
     border-radius: var(--radius-lg);
     cursor: pointer;
-    box-shadow: 0 4px 8px var(--shadow-light);
-    transition: transform var(--transition), box-shadow var(--transition);
+    box-shadow: var(--shadow-card);
+    transition: transform var(--transition);
     position: relative;
 }
 
 .deck:hover:not(.disabled) {
     transform: translateY(-2px);
-    box-shadow: var(--shadow-hover);
+    box-shadow: var(--shadow-card-hover);
 }
 
 .deck.disabled {
@@ -238,6 +238,7 @@ body {
 
 .clickable-card:hover .card-image {
     transform: translateY(-4px);
+    box-shadow: var(--shadow-card-hover);
 }
 
 .clickable-card:active .card-image {
@@ -247,7 +248,6 @@ body {
 .clickable-title {
     cursor: pointer;
     text-decoration: none;
-    transition: text-decoration var(--transition);
 }
 
 .clickable-card:hover .clickable-title {
@@ -406,7 +406,7 @@ body {
     }
 
     .card-grid {
-        grid-template-columns: repeat(auto-fill, minmax(calc(var(--card-width) + 20px), 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(var(--card-container-width), 1fr));
     }
 }
 
