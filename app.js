@@ -431,7 +431,7 @@ const DeckComponent = {
           </button>
         </div>
         <div class="streaming-selector">
-          <label for="streaming-select" class="streaming-label">Songs open in:</label>
+          <label for="streaming-select" class="streaming-label">Songs links open in:</label>
           <select
             id="streaming-select"
             class="streaming-select"
