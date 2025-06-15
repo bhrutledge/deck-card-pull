@@ -222,7 +222,7 @@ body {
     background-repeat: no-repeat;
     border-radius: var(--radius-sm);
     box-shadow: var(--shadow-card);
-    margin-bottom: var(--spacing-sm);
+    margin-bottom: var(--spacing-xs);
     transition: transform var(--transition), box-shadow var(--transition);
 }
 
@@ -259,6 +259,11 @@ body {
     flex: 1;
 }
 
+.card-number {
+    font-size: var(--font-sm);
+    color: var(--muted-color);
+}
+
 .card-title {
     font-size: var(--font-base);
     font-weight: normal;
@@ -267,7 +272,7 @@ body {
     margin-bottom: var(--spacing-sm);
     word-wrap: break-word;
     overflow-wrap: break-word;
-    max-width: var(--card-width);
+    max-width: var(--card-container-width);
 }
 
 .song-title-link {
@@ -281,6 +286,8 @@ body {
 
 .card-name {
     white-space: nowrap;
+    font-size: var(--font-sm);
+    color: var(--muted-dark);
 }
 
 .share-button-container {
