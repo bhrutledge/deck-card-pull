@@ -510,28 +510,39 @@ const CardList = {
   template: /*html */`
     <div>
       <div class="card-grid" v-if="drawnCards.length > 0">
-        <a
+        <div
           v-for="(card, index) in drawnCards"
           :key="card.code"
-          class="card-grid-item clickable-card"
+          class="card-grid-item"
           :ref="'card-' + index"
-          :href="getPreferredStreamingUrl(card)"
-          target="_blank"
-          rel="noopener noreferrer"
-          :title="getCardTitle(card)"
         >
-          <img
-            :src="'./cards/' + card.code + '.jpg'"
-            :alt="card.title"
-            class="card-image"
-          />
+          <a
+            :href="getPreferredStreamingUrl(card)"
+            target="_blank"
+            rel="noopener noreferrer"
+            :title="getCardTitle(card)"
+            class="card-image-link"
+          >
+            <img
+              :src="'./cards/' + card.code + '.jpg'"
+              :alt="card.title"
+              class="card-image"
+              @load="onImageLoad"
+            />
+          </a>
           <div class="card-content">
-            <div class="card-title clickable-title">
+            <div class="card-title">
               {{ index + 1 }}. {{ getSongName(card.title) }}
-              <span class="card-name">{{ getCardName(card.title) }}</span>
+              <a
+                :href="getPreferredStreamingUrl(card)"
+                target="_blank"
+                rel="noopener noreferrer"
+                :title="getCardTitle(card)"
+                class="card-name-link"
+              >{{ getCardName(card.title) }}</a>
             </div>
           </div>
-        </a>
+        </div>
       </div>
     </div>
   `,
@@ -569,6 +580,9 @@ const CardList = {
           }
         }
       });
+    },
+    onImageLoad(event) {
+      event.target.classList.add('loaded');
     }
   }
 };

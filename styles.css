@@ -210,33 +210,29 @@ body {
     font-size: var(--font-lg);
 }
 
-.clickable-card {
-    cursor: pointer;
+.card-image-link {
+    display: block;
     text-decoration: none;
-    color: inherit;
+    width: 100%;
+    max-width: var(--card-width);
+    aspect-ratio: 5/7;
+    background-image: url('./cards/back.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-card);
+    margin-bottom: var(--spacing-sm);
+    transition: transform var(--transition), box-shadow var(--transition);
 }
 
-.clickable-card:hover {
-    text-decoration: none;
-    color: inherit;
-}
-
-.clickable-card:hover .card-image {
+.card-image-link:hover {
     transform: translateY(-4px);
     box-shadow: var(--shadow-card-hover);
 }
 
-.clickable-card:active .card-image {
+.card-image-link:active {
     transform: translateY(-2px);
-}
-
-.clickable-title {
-    cursor: pointer;
-    text-decoration: none;
-}
-
-.clickable-card:hover .clickable-title {
-    text-decoration: underline;
 }
 
 .card-grid-item {
@@ -248,19 +244,15 @@ body {
 
 .card-image {
     width: 100%;
-    max-width: var(--card-width);
-    height: auto;
-    aspect-ratio: 5/7;
+    height: 100%;
     object-fit: cover;
     border-radius: var(--radius-sm);
-    box-shadow: var(--shadow-card);
-    margin-bottom: var(--spacing-sm);
-    transition: transform var(--transition);
+    transition: opacity var(--transition);
+    opacity: 0;
+}
 
-    background-image: url('./cards/back.jpg');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
+.card-image.loaded {
+    opacity: 1;
 }
 
 .card-content {
@@ -275,8 +267,14 @@ body {
     margin-bottom: var(--spacing-sm);
 }
 
-.card-name {
+.card-name-link {
+    color: var(--link-color);
+    text-decoration: underline;
     white-space: nowrap;
+}
+
+.card-name-link:hover {
+    color: var(--primary-color);
 }
 
 .share-button-container {
