@@ -698,10 +698,32 @@ const App = {
             // Skip invalid character
             i++;
           }
+
+          // Validate card codes before loading
+          if (cardCodes.length > 13) {
+            throw new Error('Too many cards in URL parameter, ignoring');
+          }
+
+          // Check for duplicates
+          const uniqueCardCodes = [...new Set(cardCodes)];
+          if (uniqueCardCodes.length !== cardCodes.length) {
+            throw new Error('Duplicate cards found in URL parameter, ignoring');
+          }
+
           loadPullFromCodes(cardCodes);
         }
       } catch (error) {
-        console.warn('URL parsing error (non-critical):', error);
+        console.warn('URL parsing error (non-critical):', error.message || error);
+        // Remove invalid cards parameter from URL on any validation failure
+        try {
+          const url = new URL(window.location);
+          if (url.searchParams.has('cards')) {
+            url.searchParams.delete('cards');
+            window.history.replaceState({}, '', url);
+          }
+        } catch (urlError) {
+          console.warn('Failed to clean up URL:', urlError);
+        }
       }
     };
 
