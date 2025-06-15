@@ -534,14 +534,14 @@ const CardList = {
           </a>
           <div class="card-content">
             <div class="card-title">
-              {{ index + 1 }}. {{ getSongName(card.title) }}
-              <a
+              {{ index + 1 }}. <a
                 :href="getPreferredStreamingUrl(card)"
                 target="_blank"
                 rel="noopener noreferrer"
                 :title="getCardTitle(card)"
-                class="card-name-link"
-              >{{ getCardName(card.title) }}</a>
+                class="song-title-link"
+              >{{ getSongName(card.title) }}</a>
+              <span class="card-name">{{ getCardName(card.title) }}</span>
             </div>
           </div>
         </div>

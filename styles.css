@@ -267,14 +267,17 @@ body {
     margin-bottom: var(--spacing-sm);
 }
 
-.card-name-link {
+.song-title-link {
     color: var(--link-color);
     text-decoration: underline;
-    white-space: nowrap;
 }
 
-.card-name-link:hover {
+.song-title-link:hover {
     color: var(--primary-color);
+}
+
+.card-name {
+    white-space: nowrap;
 }
 
 .share-button-container {
