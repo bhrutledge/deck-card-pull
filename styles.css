@@ -379,8 +379,22 @@ body {
 
 .modal-content img {
     display: block;
-    margin: var(--spacing-md) auto;
+    margin: var(--spacing-sm) auto;
     max-width: 100%;
+    aspect-ratio: 1;
+    object-fit: contain;
+}
+
+.modal-content a img {
+    transition: opacity var(--transition);
+}
+
+.modal-content a:hover img {
+    opacity: 0.9;
+}
+
+.modal-art-credit {
+    text-align: center;
 }
 
 @media (min-width: 481px) {
