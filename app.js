@@ -431,19 +431,21 @@ const DeckComponent = {
           </button>
         </div>
         <div class="streaming-selector">
-          <div class="streaming-label">Open songs on:</div>
-          <div class="streaming-icons">
-            <button
+          <label for="streaming-select" class="streaming-label">Songs open in:</label>
+          <select
+            id="streaming-select"
+            class="streaming-select"
+            :value="streamingPreference"
+            @change="$emit('update-preference', $event.target.value)"
+          >
+            <option
               v-for="service in services"
               :key="service.value"
-              class="streaming-icon-btn"
-              :class="{ active: streamingPreference === service.value }"
-              @click="$emit('update-preference', service.value)"
-              :title="service.name"
+              :value="service.value"
             >
-              <i :class="service.icon"></i>
-            </button>
-          </div>
+              {{ service.name }}
+            </option>
+          </select>
         </div>
       </div>
     </div>
@@ -465,10 +467,10 @@ const DeckComponent = {
       showCopiedFeedback: false,
       showInfoModal: false,
       services: [
-        { value: 'bandcamp', name: 'Bandcamp', icon: 'fab fa-bandcamp' },
-        { value: 'spotify', name: 'Spotify', icon: 'fab fa-spotify' },
-        { value: 'appleMusic', name: 'Apple Music', icon: 'fab fa-apple' },
-        { value: 'youTubeMusic', name: 'YouTube Music', icon: 'fab fa-youtube' }
+        { value: 'bandcamp', name: 'Bandcamp' },
+        { value: 'spotify', name: 'Spotify' },
+        { value: 'appleMusic', name: 'Apple Music' },
+        { value: 'youTubeMusic', name: 'YouTube Music' }
       ]
     };
   },

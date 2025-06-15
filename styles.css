@@ -47,7 +47,6 @@
     --card-width: 120px;
     --card-container-width: calc(var(--card-width) + var(--spacing-md));
     --instructions-max-width: 30rem;
-    --streaming-btn-size: 28px;
     --action-btn-size: 36px;
     --modal-close-size: 24px;
 
@@ -152,48 +151,34 @@ body {
 }
 
 .streaming-label {
+    display: block;
     font-size: var(--font-sm);
     color: var(--primary-color);
+    margin-bottom: var(--spacing-xs);
 }
 
-.streaming-icons {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: var(--spacing-sm);
-    justify-items: center;
-    max-width: fit-content;
-    margin: var(--spacing-xs) auto;
-}
-
-.streaming-icon-btn {
-    width: var(--streaming-btn-size);
-    height: var(--streaming-btn-size);
+.streaming-select {
+    width: 100%;
+    max-width: 140px;
+    padding: var(--spacing-xs) var(--spacing-sm);
     border: 1px solid var(--border-color);
     border-radius: var(--radius-sm);
     background: var(--bg-color);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    color: var(--text-color);
+    font-size: var(--font-sm);
+    font-family: var(--font-family);
     cursor: pointer;
-    transition: all var(--transition);
-    color: var(--muted-color);
+    transition: border-color var(--transition);
 }
 
-.streaming-icon-btn:hover {
-    background: var(--light-gray);
+.streaming-select:hover {
     border-color: var(--border-muted);
-    color: var(--muted-dark);
 }
 
-.streaming-icon-btn.active {
-    background: var(--muted-dark);
-    border-color: var(--muted-dark);
-    color: var(--text-inverted);
-    box-shadow: var(--shadow-streaming);
-}
-
-.streaming-icon-btn i {
-    font-size: var(--font-lg);
+.streaming-select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(44, 62, 80, 0.1);
 }
 
 .action-icons {
@@ -418,15 +403,10 @@ body {
     .main-content {
         gap: var(--spacing-xl);
     }
-
-    .streaming-icons {
-        grid-template-columns: repeat(4, 1fr);
-    }
 }
 
 @media (min-width: 1025px) {
     :root {
         --card-width: 180px;
-        --streaming-btn-size: 32px;
     }
 }
