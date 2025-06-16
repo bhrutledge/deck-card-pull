@@ -753,6 +753,24 @@ const App = {
 
     const startNewPull = () => {
       drawnCards.value = [];
+      // Scroll to top of page after a small delay to ensure DOM updates
+      setTimeout(() => {
+        // Try different scroll methods for Safari compatibility
+        try {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        } catch (e) {
+          // Fallback for older browsers
+          window.scrollTo(0, 0);
+        }
+
+        // Additional Safari-specific fallback
+        if (document.documentElement) {
+          document.documentElement.scrollTop = 0;
+        }
+        if (document.body) {
+          document.body.scrollTop = 0;
+        }
+      }, 50); // Increased timeout for Safari
     };
 
     // Watch for changes to update URL (with throttling to prevent excessive updates)
