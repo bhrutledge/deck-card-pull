@@ -1,5 +1,20 @@
 const { createApp, ref, computed, onMounted, watch } = Vue;
 
+const MAX_CARDS = 13;
+
+const STREAMING_SERVICES = [
+  { value: 'appleMusic', name: 'Apple Music' },
+  { value: 'bandcamp', name: 'Bandcamp' },
+  { value: 'spotify', name: 'Spotify' },
+  { value: 'youTubeMusic', name: 'YouTube Music' }
+];
+
+const STREAMING_SERVICE_KEYS = STREAMING_SERVICES.map(service => service.value);
+
+const STREAMING_SERVICE_NAMES = Object.fromEntries(
+  STREAMING_SERVICES.map(service => [service.value, service.name])
+);
+
 const DECK = {
   // Diamonds
   "AD": {
@@ -468,12 +483,7 @@ const DeckComponent = {
     return {
       showCopiedFeedback: false,
       showInfoModal: false,
-      services: [
-        { value: 'appleMusic', name: 'Apple Music' },
-        { value: 'bandcamp', name: 'Bandcamp' },
-        { value: 'spotify', name: 'Spotify' },
-        { value: 'youTubeMusic', name: 'YouTube Music' }
-      ]
+      services: STREAMING_SERVICES
     };
   },
   methods: {
@@ -548,13 +558,7 @@ const CardList = {
       return parenIndex !== -1 ? ' ' + title.substring(parenIndex) : '';
     },
     getCardTitle(card) {
-      const serviceNames = {
-        'bandcamp': 'Bandcamp',
-        'spotify': 'Spotify',
-        'appleMusic': 'Apple Music',
-        'youTubeMusic': 'YouTube Music'
-      };
-      const serviceName = serviceNames[this.streamingPreference] || 'your preferred streaming service';
+      const serviceName = STREAMING_SERVICE_NAMES[this.streamingPreference] || 'your preferred streaming service';
       return `Open on ${serviceName}`;
     },
     scrollToLatestCard() {
@@ -602,7 +606,7 @@ const App = {
     const loadStreamingPreference = () => {
       try {
         const saved = localStorage.getItem('streamingPreference');
-        if (saved && ['spotify', 'appleMusic', 'youTubeMusic', 'bandcamp'].includes(saved)) {
+        if (saved && STREAMING_SERVICE_KEYS.includes(saved)) {
           streamingPreference.value = saved;
         }
       } catch (error) {
@@ -620,13 +624,10 @@ const App = {
     };
 
     const getPreferredStreamingUrl = (card) => {
-      const urlMap = {
-        'spotify': card.spotify,
-        'appleMusic': card.appleMusic,
-        'youTubeMusic': card.youTubeMusic,
-        'bandcamp': card.bandcamp
-      };
-      return urlMap[streamingPreference.value] || card.bandcamp || card.spotify || card.appleMusic || card.youTubeMusic;
+      const urlMap = Object.fromEntries(
+        STREAMING_SERVICE_KEYS.map(key => [key, card[key]])
+      );
+      return urlMap[streamingPreference.value];
     };
 
     const updateURL = () => {
@@ -696,7 +697,7 @@ const App = {
           const cardCodes = parseCardCodes(cardsParam);
 
           // Validate card codes before loading
-          if (cardCodes.length > 13) {
+          if (cardCodes.length > MAX_CARDS) {
             throw new Error('Too many cards in URL parameter, ignoring');
           }
 
@@ -725,7 +726,7 @@ const App = {
 
     const drawCard = () => {
       try {
-        if (drawnCards.value.length >= 13) return;
+        if (drawnCards.value.length >= MAX_CARDS) return;
 
         const drawnCodes = drawnCards.value.map(card => card.code);
         const availableCodes = allCardCodes.filter(code => !drawnCodes.includes(code));
@@ -804,7 +805,8 @@ const App = {
       cardListRef,
       streamingPreference,
       saveStreamingPreference,
-      getPreferredStreamingUrl
+      getPreferredStreamingUrl,
+      MAX_CARDS
     };
   }
 };
