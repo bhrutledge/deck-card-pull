@@ -211,7 +211,7 @@ const DECK = {
     youTubeMusic: "https://music.youtube.com/watch?v=u-QfaJFiOiw"
   },
   "2C": {
-    title: "Burn this Atlas Down (2 of Clubs)",
+    title: "Burn This Atlas Down (2 of Clubs)",
     bandcamp: "https://hallelujahthehills.bandcamp.com/track/burn-this-atlas-down-2-of-clubs",
     spotify: "https://open.spotify.com/track/41u84b3dGE0yfs5NKMFIon",
     appleMusic: "https://music.apple.com/us/song/burn-this-atlas-down-2-of-clubs-feat-craig-finn/1799855743",
@@ -253,21 +253,21 @@ const DECK = {
     youTubeMusic: "https://music.youtube.com/watch?v=R8g1NoIjd-s"
   },
   "8C": {
-    title: "My Past Is Your Futurism (8 of Clubs)",
+    title: "My Past is Your Futurism (8 of Clubs)",
     bandcamp: "https://hallelujahthehills.bandcamp.com/track/my-past-is-your-futurism-8-of-clubs",
     spotify: "https://open.spotify.com/track/6wnuxbTcqOLSpiNWmar7gW",
     appleMusic: "https://music.apple.com/us/song/my-past-is-your-futurism-8-of-clubs-feat-devin-davis/1799856080",
     youTubeMusic: "https://music.youtube.com/watch?v=9QVJ_H9rSJI"
   },
   "9C": {
-    title: "Failure's my Fuel (9 of Clubs)",
+    title: "Failure's My Fuel (9 of Clubs)",
     bandcamp: "https://hallelujahthehills.bandcamp.com/track/failures-my-fuel-9-of-clubs",
     spotify: "https://open.spotify.com/track/6gYPRSZYPp2Zz0nH3hcjzM",
     appleMusic: "https://music.apple.com/us/song/failures-my-fuel-9-of-clubs/1799856081",
     youTubeMusic: "https://music.youtube.com/watch?v=HkzhAUhyxV4"
   },
   "10C": {
-    title: "I'm your Palindrome (10 of Clubs)",
+    title: "I'm Your Palindrome (10 of Clubs)",
     bandcamp: "https://hallelujahthehills.bandcamp.com/track/im-your-palindrome-10-of-clubs",
     spotify: "https://open.spotify.com/track/5VFLJwMFfOsqVGpATr247k",
     appleMusic: "https://music.apple.com/us/song/im-your-palindrome-10-of-clubs-feat-kiwi-jr/1799856082",
