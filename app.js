@@ -403,7 +403,14 @@ const DeckComponent = {
 
       <div v-if="hasCards" class="deck-controls">
         <div class="action-icons">
-          <div class="share-button-container">
+          <button
+          class="action-icon-btn"
+          @click="$emit('new-pull')"
+          title="Start again"
+          >
+          <i class="fas fa-delete-left"></i>
+        </button>
+        <div class="share-button-container">
             <button
               class="action-icon-btn"
               @click="copyUrlToClipboard"
@@ -417,17 +424,10 @@ const DeckComponent = {
           </div>
           <button
             class="action-icon-btn"
-            @click="$emit('new-pull')"
-            title="Start again"
-          >
-            <i class="fas fa-rotate-left"></i>
-          </button>
-          <button
-            class="action-icon-btn"
             @click="showInfoModal = true"
             title="About DECK"
           >
-            <i class="fas fa-question"></i>
+            <i class="fas fa-circle-question"></i>
           </button>
         </div>
         <div class="streaming-selector">

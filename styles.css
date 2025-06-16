@@ -99,11 +99,15 @@ body {
 }
 
 .main-title {
-    font-size: var(--font-2xl);
+    font-size: var(--font-xl);
     font-family: var(--heading-font-family);
     font-weight: var(--heading-font-weight);
-    text-align: center;
-    margin: 0 0 var(--spacing-md) 0;
+    margin: 0;
+}
+
+.main-subtitle {
+    font-size: var(--font-xs);
+    margin-top: 0;
 }
 
 .deck-container {
@@ -187,7 +191,7 @@ body {
 
 .action-icons {
     display: flex;
-    gap: var(--spacing-xs);
+    gap: var(--spacing-sm);
     justify-content: center;
 }
 
@@ -415,6 +419,10 @@ body {
     .card-grid {
         grid-template-columns: repeat(auto-fill, minmax(var(--card-container-width), 1fr));
     }
+
+    .main-title {
+        font-size: var(--font-2xl);
+    }
 }
 
 @media (min-width: 768px) {
@@ -425,6 +433,7 @@ body {
     .main-content {
         gap: var(--spacing-xl);
     }
+
 }
 
 @media (min-width: 1025px) {
