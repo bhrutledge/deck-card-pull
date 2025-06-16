@@ -447,15 +447,6 @@ const DeckComponent = {
             </option>
           </select>
         </div>
-        <div class="spotify-export-container">
-          <a
-            @click.prevent="handleSpotifyExport"
-            href="#"
-            class="spotify-export-link"
-          >
-            Make Spotify playlist
-          </a>
-        </div>
       </div>
     </div>
 
@@ -478,9 +469,9 @@ const DeckComponent = {
       showCopiedFeedback: false,
       showInfoModal: false,
       services: [
+        { value: 'appleMusic', name: 'Apple Music' },
         { value: 'bandcamp', name: 'Bandcamp' },
         { value: 'spotify', name: 'Spotify' },
-        { value: 'appleMusic', name: 'Apple Music' },
         { value: 'youTubeMusic', name: 'YouTube Music' }
       ]
     };
@@ -500,35 +491,6 @@ const DeckComponent = {
         }, 3000);
       } catch (err) {
         console.error('Failed to copy URL to clipboard:', err);
-      }
-    },
-    handleSpotifyExport() {
-      if (!this.drawnCards || this.drawnCards.length === 0) {
-        return;
-      }
-
-      const spotifyUrls = this.drawnCards
-        .map(card => card.spotify)
-        .filter(url => url);
-
-      if (spotifyUrls.length === 0) {
-        console.warn('No Spotify URLs found in current cards');
-        return;
-      }
-
-      try {
-        localStorage.setItem('spotify_playlist_urls', JSON.stringify(spotifyUrls));
-      } catch (error) {
-        console.error('Failed to save Spotify URLs to localStorage:', error);
-        return;
-      }
-
-      const spotifyUrl = window.location.origin + '/spotify/';
-      const newTab = window.open(spotifyUrl, '_blank', 'noopener,noreferrer');
-
-      if (!newTab) {
-        console.error('Failed to open new tab - popup blocked?');
-        // Could show an error message to user here
       }
     }
   }

@@ -13,12 +13,6 @@
     --bg-color: white;
     --bg-light: #f8f8f8;
 
-    /* Spotify brand colors */
-    --spotify-green: #1DB954;
-    --spotify-green-hover: #1ed760;
-    --spotify-green-dark: #1aa34a;
-    --spotify-black: #191414;
-
     /* Success and error colors */
     --success-color: #28a745;
     --success-background: rgba(40, 167, 69, 0.1);
@@ -479,26 +473,4 @@ body {
         height: 48px;
         font-size: var(--font-2xl);
     }
-}
-
-.spotify-export-container {
-    margin-top: var(--spacing-sm);
-    text-align: center;
-}
-
-.spotify-export-link {
-    display: inline-block;
-    color: var(--spotify-green);
-    text-decoration: underline;
-    font-weight: normal;
-    font-size: var(--font-sm);
-    transition: all 0.2s ease;
-}
-
-.spotify-export-link:hover {
-    color: var(--spotify-green-hover);
-}
-
-.spotify-export-link:active {
-    color: var(--spotify-green-dark);
 }
