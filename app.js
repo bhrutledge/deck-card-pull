@@ -412,7 +412,7 @@ const DeckComponent = {
               <i class="fas fa-link"></i>
             </button>
             <div v-if="showCopiedFeedback" class="copy-tooltip">
-              Link copied!
+              A link for this draw has been copied to your clipboard.
             </div>
           </div>
           <button
@@ -488,7 +488,7 @@ const DeckComponent = {
         this.showCopiedFeedback = true;
         setTimeout(() => {
           this.showCopiedFeedback = false;
-        }, 2000);
+        }, 3000);
       } catch (err) {
         console.error('Failed to copy URL to clipboard:', err);
       }

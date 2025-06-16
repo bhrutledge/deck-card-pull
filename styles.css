@@ -3,9 +3,7 @@
 :root {
     /* Colors */
     --primary-color: #2c3e50;
-    --secondary-color: #34495e;
     --text-color: #333;
-    --text-light: #666;
     --text-inverted: white;
     --link-color: #000;
     --muted-color: #6c757d;
@@ -13,7 +11,6 @@
     --light-gray: #f8f9fa;
     --border-color: #dee2e6;
     --border-muted: #adb5bd;
-    --border-light: #ddd;
     --bg-color: white;
 
     /* Spacing */
@@ -296,35 +293,36 @@ body {
 
 .copy-tooltip {
     position: absolute;
-    bottom: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-    background: var(--primary-color);
+    left: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+    background: var(--text-color);
     color: var(--text-inverted);
     padding: 4px 8px;
+    border: 1px solid var(--border-muted);
     border-radius: var(--radius-sm);
     font-size: var(--font-xs);
-    white-space: nowrap;
-    margin-bottom: 4px;
+    width: 8rem;
+    margin-left: 8px;
     opacity: 1;
-    animation: tooltipFade 2s ease-in-out;
+    animation: tooltipFade 3s ease-in-out;
 }
 
 .copy-tooltip::after {
     content: '';
     position: absolute;
-    top: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-    border: 4px solid transparent;
-    border-top-color: var(--primary-color);
+    right: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+    border: 8px solid transparent;
+    border-right-color: var(--text-color);
 }
 
 @keyframes tooltipFade {
-    0% { opacity: 0; transform: translateX(-50%) translateY(4px); }
-    10% { opacity: 1; transform: translateX(-50%) translateY(0); }
-    90% { opacity: 1; transform: translateX(-50%) translateY(0); }
-    100% { opacity: 0; transform: translateX(-50%) translateY(-4px); }
+    0% { opacity: 0; transform: translateY(-50%) translateX(-4px); }
+    10% { opacity: 1; transform: translateY(-50%) translateX(0); }
+    90% { opacity: 1; transform: translateY(-50%) translateX(0); }
+    100% { opacity: 0; transform: translateY(-50%) translateX(-4px); }
 }
 
 .modal-overlay {
