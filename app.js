@@ -420,7 +420,7 @@ const DeckComponent = {
             @click="$emit('new-pull')"
             title="Start again"
           >
-            <i class="fas fa-redo"></i>
+            <i class="fas fa-rotate-left"></i>
           </button>
           <button
             class="action-icon-btn"
@@ -431,7 +431,7 @@ const DeckComponent = {
           </button>
         </div>
         <div class="streaming-selector">
-          <label for="streaming-select" class="streaming-label">Songs links open in:</label>
+          <label for="streaming-select" class="streaming-label">Song links open in:</label>
           <select
             id="streaming-select"
             class="streaming-select"
@@ -491,17 +491,6 @@ const DeckComponent = {
         }, 2000);
       } catch (err) {
         console.error('Failed to copy URL to clipboard:', err);
-        // Fallback for older browsers
-        const textArea = document.createElement('textarea');
-        textArea.value = window.location.href;
-        document.body.appendChild(textArea);
-        textArea.select();
-        document.execCommand('copy');
-        document.body.removeChild(textArea);
-        this.showCopiedFeedback = true;
-        setTimeout(() => {
-          this.showCopiedFeedback = false;
-        }, 2000);
       }
     }
   }
