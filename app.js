@@ -391,8 +391,11 @@ const DECK = {
 };
 
 const DeckComponent = {
-  props: ['remainingCards', 'isDisabled', 'hasCards', 'streamingPreference'],
-  emits: ['draw-card', 'new-pull', 'update-preference'], template: /* html */`
+  components: {
+    SpotifyExportComponent
+  },
+  props: ['remainingCards', 'isDisabled', 'hasCards', 'streamingPreference', 'drawnCards'],
+  emits: ['draw-card', 'new-pull', 'update-preference', 'restore-cards'], template: /* html */`
     <div class="deck-container">
       <div
         class="deck"
@@ -447,6 +450,12 @@ const DeckComponent = {
             </option>
           </select>
         </div>
+
+        <!-- Spotify Export Component -->
+        <spotify-export-component
+          :drawn-cards="drawnCards || []"
+          @restore-cards="$emit('restore-cards', $event)"
+        ></spotify-export-component>
       </div>
     </div>
 
@@ -582,7 +591,8 @@ const CardList = {
 const App = {
   components: {
     DeckComponent,
-    CardList
+    CardList,
+    SpotifyExportComponent
   },
   setup() {
     const drawnCards = ref([]);
@@ -658,36 +668,42 @@ const App = {
       drawnCards.value = validCards;
     };
 
+    // Parse card codes from concatenated string (handles both 2 and 3 character codes)
+    const parseCardCodes = (cardCodesString) => {
+      const cardCodes = [];
+      let i = 0;
+      while (i < cardCodesString.length) {
+        // Try 3-character code first (for 10s)
+        if (i + 2 < cardCodesString.length) {
+          const code3 = cardCodesString.substring(i, i + 3);
+          if (DECK[code3]) {
+            cardCodes.push(code3);
+            i += 3;
+            continue;
+          }
+        }
+        // Try 2-character code
+        if (i + 1 < cardCodesString.length) {
+          const code2 = cardCodesString.substring(i, i + 2);
+          if (DECK[code2]) {
+            cardCodes.push(code2);
+            i += 2;
+            continue;
+          }
+        }
+        // Skip invalid character
+        i++;
+      }
+      return cardCodes;
+    };
+
     const loadFromURL = () => {
       try {
         const url = new URL(window.location);
         const cardsParam = url.searchParams.get('cards');
         if (cardsParam && cardsParam.length < 200) {
           // Parse card codes from concatenated string
-          const cardCodes = [];
-          let i = 0;
-          while (i < cardsParam.length) {
-            // Try 3-character code first (for 10s)
-            if (i + 2 < cardsParam.length) {
-              const code3 = cardsParam.substring(i, i + 3);
-              if (DECK[code3]) {
-                cardCodes.push(code3);
-                i += 3;
-                continue;
-              }
-            }
-            // Try 2-character code
-            if (i + 1 < cardsParam.length) {
-              const code2 = cardsParam.substring(i, i + 2);
-              if (DECK[code2]) {
-                cardCodes.push(code2);
-                i += 2;
-                continue;
-              }
-            }
-            // Skip invalid character
-            i++;
-          }
+          const cardCodes = parseCardCodes(cardsParam);
 
           // Validate card codes before loading
           if (cardCodes.length > 13) {
@@ -773,6 +789,25 @@ const App = {
       }, 50); // Increased timeout for Safari
     };
 
+    // Handle restore cards event from Spotify component
+    const handleRestoreCards = (cardCodes) => {
+      try {
+        if (!cardCodes || typeof cardCodes !== 'string') {
+          console.warn('Invalid card codes received in restore event');
+          return;
+        }
+
+        // Use shared parsing logic
+        const codes = parseCardCodes(cardCodes);
+
+        if (codes.length > 0) {
+          loadPullFromCodes(codes);
+        }
+      } catch (error) {
+        console.error('Error restoring cards from event:', error);
+      }
+    };
+
     // Watch for changes to update URL (with throttling to prevent excessive updates)
     let urlUpdateTimeout = null;
     watch(drawnCards, () => {
@@ -798,7 +833,8 @@ const App = {
       cardListRef,
       streamingPreference,
       saveStreamingPreference,
-      getPreferredStreamingUrl
+      getPreferredStreamingUrl,
+      handleRestoreCards
     };
   }
 };

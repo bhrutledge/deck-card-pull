@@ -13,6 +13,23 @@
     --bg-color: white;
     --bg-light: #f8f8f8;
 
+    /* Spotify brand colors */
+    --spotify-green: #1DB954;
+    --spotify-green-hover: #1ed760;
+    --spotify-green-dark: #1aa34a;
+    --spotify-black: #191414;
+
+    /* Success and error colors */
+    --success-color: #28a745;
+    --success-background: rgba(40, 167, 69, 0.1);
+    --error-color: #dc3545;
+    --error-background: rgba(220, 53, 69, 0.1);
+    --muted-background: rgba(108, 117, 125, 0.1);
+
+    /* Card and container backgrounds */
+    --card-background: white;
+    --shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.15);
+
     /* Spacing */
     --spacing-xs: 0.25rem;
     --spacing-sm: 0.5rem;
@@ -45,7 +62,6 @@
     --card-container-width: calc(var(--card-width) + var(--spacing-md));
     --instructions-max-width: 30rem;
     --action-btn-size: 36px;
-    --modal-close-size: 24px;
 
     /* Transitions */
     --transition: 0.2s ease;
@@ -54,7 +70,6 @@
     --shadow-card: 0 4px 8px rgba(0, 0, 0, 0.3);
     --shadow-card-hover: 0 6px 12px rgba(0, 0, 0, 0.3);
     --shadow-modal: 0 10px 30px rgba(0, 0, 0, 0.3);
-    --shadow-streaming: 0 2px 4px rgba(73, 80, 87, 0.3);
 
     /* Z-index */
     --z-modal: 1000;
@@ -143,6 +158,10 @@ body {
     cursor: not-allowed;
 }
 
+.deck-controls {
+    width: 100%;
+}
+
 .card-grid {
     display: grid;
     grid-template-columns: 1fr;
@@ -166,8 +185,7 @@ body {
 }
 
 .streaming-select {
-    width: 100%;
-    max-width: 140px;
+    width: var(--card-width);
     padding: var(--spacing-xs) var(--spacing-sm);
     border: 1px solid var(--border-color);
     border-radius: var(--radius-sm);
@@ -461,4 +479,53 @@ body {
         height: 48px;
         font-size: var(--font-2xl);
     }
+}
+
+/* Spotify Export Styles */
+.spotify-export-container {
+    margin-top: var(--spacing-sm);
+    text-align: center;
+}
+
+.spotify-export-link {
+    display: inline-block;
+    color: var(--spotify-green);
+    text-decoration: underline;
+    font-weight: normal;
+    font-size: var(--font-sm);
+    transition: all 0.2s ease;
+}
+
+.spotify-export-link:hover {
+    color: var(--spotify-green-hover);
+}
+
+.spotify-export-link:active {
+    color: var(--spotify-green-dark);
+}
+
+.spotify-export-status {
+    color: var(--muted-color);
+    font-style: italic;
+    font-size: var(--font-sm);
+}
+
+.spotify-export-error {
+    color: var(--error-color);
+    font-size: var(--font-sm);
+}
+
+.retry-link {
+    margin-left: var(--spacing-sm);
+    color: var(--spotify-green);
+    background: none;
+    border: none;
+    text-decoration: underline;
+    font-size: var(--font-sm);
+    cursor: pointer;
+    padding: 0;
+}
+
+.retry-link:hover {
+    color: var(--spotify-green-hover);
 }
