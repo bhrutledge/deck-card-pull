@@ -481,7 +481,6 @@ body {
     }
 }
 
-/* Spotify Export Styles */
 .spotify-export-container {
     margin-top: var(--spacing-sm);
     text-align: center;
@@ -502,30 +501,4 @@ body {
 
 .spotify-export-link:active {
     color: var(--spotify-green-dark);
-}
-
-.spotify-export-status {
-    color: var(--muted-color);
-    font-style: italic;
-    font-size: var(--font-sm);
-}
-
-.spotify-export-error {
-    color: var(--error-color);
-    font-size: var(--font-sm);
-}
-
-.retry-link {
-    margin-left: var(--spacing-sm);
-    color: var(--spotify-green);
-    background: none;
-    border: none;
-    text-decoration: underline;
-    font-size: var(--font-sm);
-    cursor: pointer;
-    padding: 0;
-}
-
-.retry-link:hover {
-    color: var(--spotify-green-hover);
 }

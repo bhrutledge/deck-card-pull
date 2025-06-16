@@ -391,11 +391,8 @@ const DECK = {
 };
 
 const DeckComponent = {
-  components: {
-    SpotifyExportComponent
-  },
   props: ['remainingCards', 'isDisabled', 'hasCards', 'streamingPreference', 'drawnCards'],
-  emits: ['draw-card', 'new-pull', 'update-preference', 'restore-cards'], template: /* html */`
+  emits: ['draw-card', 'new-pull', 'update-preference'], template: /* html */`
     <div class="deck-container">
       <div
         class="deck"
@@ -450,12 +447,15 @@ const DeckComponent = {
             </option>
           </select>
         </div>
-
-        <!-- Spotify Export Component -->
-        <spotify-export-component
-          :drawn-cards="drawnCards || []"
-          @restore-cards="$emit('restore-cards', $event)"
-        ></spotify-export-component>
+        <div class="spotify-export-container">
+          <a
+            @click.prevent="handleSpotifyExport"
+            href="#"
+            class="spotify-export-link"
+          >
+            Make Spotify playlist
+          </a>
+        </div>
       </div>
     </div>
 
@@ -500,6 +500,35 @@ const DeckComponent = {
         }, 3000);
       } catch (err) {
         console.error('Failed to copy URL to clipboard:', err);
+      }
+    },
+    handleSpotifyExport() {
+      if (!this.drawnCards || this.drawnCards.length === 0) {
+        return;
+      }
+
+      const spotifyUrls = this.drawnCards
+        .map(card => card.spotify)
+        .filter(url => url);
+
+      if (spotifyUrls.length === 0) {
+        console.warn('No Spotify URLs found in current cards');
+        return;
+      }
+
+      try {
+        localStorage.setItem('spotify_playlist_urls', JSON.stringify(spotifyUrls));
+      } catch (error) {
+        console.error('Failed to save Spotify URLs to localStorage:', error);
+        return;
+      }
+
+      const spotifyUrl = window.location.origin + '/spotify/';
+      const newTab = window.open(spotifyUrl, '_blank', 'noopener,noreferrer');
+
+      if (!newTab) {
+        console.error('Failed to open new tab - popup blocked?');
+        // Could show an error message to user here
       }
     }
   }
@@ -591,8 +620,7 @@ const CardList = {
 const App = {
   components: {
     DeckComponent,
-    CardList,
-    SpotifyExportComponent
+    CardList
   },
   setup() {
     const drawnCards = ref([]);
@@ -789,25 +817,6 @@ const App = {
       }, 50); // Increased timeout for Safari
     };
 
-    // Handle restore cards event from Spotify component
-    const handleRestoreCards = (cardCodes) => {
-      try {
-        if (!cardCodes || typeof cardCodes !== 'string') {
-          console.warn('Invalid card codes received in restore event');
-          return;
-        }
-
-        // Use shared parsing logic
-        const codes = parseCardCodes(cardCodes);
-
-        if (codes.length > 0) {
-          loadPullFromCodes(codes);
-        }
-      } catch (error) {
-        console.error('Error restoring cards from event:', error);
-      }
-    };
-
     // Watch for changes to update URL (with throttling to prevent excessive updates)
     let urlUpdateTimeout = null;
     watch(drawnCards, () => {
@@ -833,8 +842,7 @@ const App = {
       cardListRef,
       streamingPreference,
       saveStreamingPreference,
-      getPreferredStreamingUrl,
-      handleRestoreCards
+      getPreferredStreamingUrl
     };
   }
 };

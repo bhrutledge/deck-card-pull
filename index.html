@@ -21,7 +21,6 @@
                     @draw-card="drawCard"
                     @new-pull="startNewPull"
                     @update-preference="saveStreamingPreference"
-                    @restore-cards="handleRestoreCards"
                 ></deck-component>
 
                 <div v-if="drawnCards.length === 0" class="main-instructions">
@@ -44,7 +43,6 @@
         </div>
     </div>
 
-    <script src="spotify.js"></script>
     <script src="app.js"></script>
 </body>
 </html>
