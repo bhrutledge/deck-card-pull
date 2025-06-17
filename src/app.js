@@ -414,6 +414,11 @@ const DeckComponent = {
         :class="{ disabled: isDisabled }"
         @click="handleDeckClick"
       >
+        <img
+          src="https://res.cloudinary.com/dgojqlr7m/image/upload/w_360,q_auto:good,f_auto/cards/back.jpg"
+          alt="DECK card back - click to draw a card"
+          class="deck-image"
+        />
       </div>
 
       <div v-if="hasCards" class="deck-controls">
