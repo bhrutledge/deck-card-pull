@@ -525,7 +525,7 @@ const CardList = {
             class="card-image-link"
           >
             <img
-              :src="'./cards/' + card.code + '.jpg'"
+              :src="'https://res.cloudinary.com/dgojqlr7m/image/upload/w_360,q_auto:good,f_auto/cards/' + card.code + '.jpg'"
               :alt="card.title"
               class="card-image"
               @load="onImageLoad"
