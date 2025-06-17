@@ -411,13 +411,14 @@ const DeckComponent = {
     <div class="deck-container">
       <div
         class="deck"
-        :class="{ disabled: isDisabled }"
+        :class="{ disabled: isDisabled, 'image-loaded': deckImageLoaded }"
         @click="handleDeckClick"
       >
         <img
           src="https://res.cloudinary.com/dgojqlr7m/image/upload/w_360,q_auto:good,f_auto/cards/back.jpg"
           alt="DECK card back - click to draw a card"
           class="deck-image"
+          @load="deckImageLoaded = true"
         />
       </div>
 
@@ -486,6 +487,7 @@ const DeckComponent = {
   `,
   data() {
     return {
+      deckImageLoaded: false,
       showCopiedFeedback: false,
       showInfoModal: false,
       services: STREAMING_SERVICES

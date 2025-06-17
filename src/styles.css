@@ -135,10 +135,14 @@ body {
     height: calc(var(--card-width) * 1.4); /* 5:7 aspect ratio */
     border-radius: var(--radius-lg);
     cursor: pointer;
-    box-shadow: var(--shadow-card);
-    transition: transform var(--transition);
+    box-shadow: none;
+    transition: transform var(--transition), box-shadow var(--transition);
     position: relative;
     overflow: hidden;
+}
+
+.deck.image-loaded {
+    box-shadow: var(--shadow-card);
 }
 
 .deck-image {
