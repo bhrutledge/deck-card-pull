@@ -22,6 +22,7 @@
 
     /* Card and container backgrounds */
     --card-background: white;
+    --card-back-image: url('https://res.cloudinary.com/dgojqlr7m/image/upload/w_360,q_auto:good,f_auto/cards/back.jpg');
     --shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.15);
 
     /* Spacing */
@@ -132,7 +133,7 @@ body {
 .deck {
     width: var(--card-width);
     height: calc(var(--card-width) * 1.4); /* 5:7 aspect ratio */
-    background-image: url('./cards/back.jpg');
+    background-image: var(--card-back-image);
     background-size: cover;
     background-position: center;
     border-radius: var(--radius-lg);
@@ -236,7 +237,7 @@ body {
     width: 100%;
     max-width: var(--card-width);
     aspect-ratio: 5/7;
-    background-image: url('./cards/back.jpg');
+    background-image: var(--card-back-image);
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
