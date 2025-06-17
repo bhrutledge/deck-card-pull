@@ -131,7 +131,7 @@ test.describe('Responsive Design', () => {
 
       // Modal should fit within mobile viewport with some padding
       expect(boundingBox?.width).toBeLessThanOrEqual(viewports.mobile.width - 8); // Allow for minimal padding
-      expect(boundingBox?.height).toBeLessThanOrEqual(viewports.mobile.height * 0.95); // 95vh max
+      expect(Math.round(boundingBox?.height || 0)).toBeLessThanOrEqual(Math.round(viewports.mobile.height * 0.95)); // 95vh max, rounded to avoid floating-point precision issues
     });
 
     test('modal close button is appropriately sized', async ({ page }) => {

@@ -85,8 +85,13 @@ test.describe('URL Sharing & Persistence', () => {
   });
 
   test('share button copies URL to clipboard', async ({ page }) => {
-    // Grant clipboard permissions
-    await page.context().grantPermissions(['clipboard-read', 'clipboard-write']);
+    try {
+      // Grant clipboard permissions invidually, since not all browsers support both
+      await page.context().grantPermissions(['clipboard-read']);
+      await page.context().grantPermissions(['clipboard-write']);
+    } catch (error) {
+      //  Ignore if permissions aren't supported by a browser
+    }
 
     // Draw a card to show controls
     await page.locator('.deck').click();
