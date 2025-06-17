@@ -14,6 +14,7 @@ A web application for drawing cards from [Hallelujah The Hills' DECK project](ht
 ## Technology
 
 - Vue 3 single page application
+- End-to-end testing with Playwright
 - Static site deployed to Netlify
 - No backend required - all data stored locally in browser
 - Mobile-first responsive design
@@ -25,14 +26,21 @@ This project uses the Netlify CLI for local development and deployment.
 ### Local Development
 
 ```bash
+# Install dependencies
+npm install
+npx playwright install
+
 # Start local development server
 netlify dev
+
+# Run E2E tests
+npx playwright test
 ```
 
 ### Deployment
 
 ```bash
-# Deploy to Netlify
+# Deploy preview
 netlify deploy
 
 # Deploy to production
