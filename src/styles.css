@@ -426,10 +426,6 @@ body {
     opacity: 0.9;
 }
 
-.modal-art-credit {
-    text-align: center;
-}
-
 @media (min-width: 481px) {
     .main-content {
         gap: var(--spacing-lg);
