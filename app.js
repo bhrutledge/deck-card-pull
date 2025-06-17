@@ -696,6 +696,11 @@ const App = {
           // Parse card codes from concatenated string
           const cardCodes = parseCardCodes(cardsParam);
 
+          // If no valid cards were parsed from a non-empty parameter, clean up URL
+          if (cardCodes.length === 0 && cardsParam.length > 0) {
+            throw new Error('No valid cards found in URL parameter');
+          }
+
           // Validate card codes before loading
           if (cardCodes.length > MAX_CARDS) {
             throw new Error('Too many cards in URL parameter, ignoring');
@@ -707,7 +712,9 @@ const App = {
             throw new Error('Duplicate cards found in URL parameter, ignoring');
           }
 
+          if (cardCodes.length > 0) {
           loadPullFromCodes(cardCodes);
+          }
         }
       } catch (error) {
         console.warn('URL parsing error (non-critical):', error.message || error);
@@ -780,15 +787,9 @@ const App = {
       }, 50); // Increased timeout for Safari
     };
 
-    // Watch for changes to update URL (with throttling to prevent excessive updates)
-    let urlUpdateTimeout = null;
+    // Watch for changes to update URL immediately
     watch(drawnCards, () => {
-      if (urlUpdateTimeout) {
-        clearTimeout(urlUpdateTimeout);
-      }
-      urlUpdateTimeout = setTimeout(() => {
         updateURL();
-      }, 300); // Throttle URL updates
     }, { deep: true });
 
     onMounted(() => {
