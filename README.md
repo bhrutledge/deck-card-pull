@@ -1,4 +1,4 @@
-# The DECK Deck
+# The DECK deck
 
 A web application for drawing cards from [Hallelujah The Hills' DECK project](https://www.hallelujahthehills.com/music/deck/) to create custom audio tarot readings.
 
@@ -25,25 +25,36 @@ This project uses the Netlify CLI for local development and deployment.
 
 ### Local Development
 
+Install dependencies:
+
 ```bash
-# Install dependencies
 npm install
 npx playwright install
+```
 
-# Start local development server
+Start local development server:
+
+```bash
 netlify dev
+```
 
-# Run E2E tests
+Run E2E tests:
+
+```bash
 npx playwright test
 ```
 
 ### Deployment
 
-```bash
-# Deploy preview
-netlify deploy
+Deploy preview:
 
-# Deploy to production
+```bash
+netlify deploy
+```
+
+Deploy to production:
+
+```bash
 netlify deploy --prod
 ```
 
