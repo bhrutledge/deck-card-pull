@@ -13,8 +13,8 @@
     <main id="app" class="container">
         <!-- Deck Component -->
         <div class="deck-container">
-            <div class="deck" :class="{ disabled: drawnCards.length >= MAX_CARDS || isLoading }"
-                @click="handleDeckClick">
+            <div class="deck" :class="{ disabled: !canDrawCard }"
+                @click="drawCard">
                 <img src="https://res.cloudinary.com/dgojqlr7m/image/upload/w_360,q_auto:good,f_auto/cards/back.jpg"
                     alt="DECK card back - click to draw a card" class="deck-image" />
             </div>
@@ -149,12 +149,8 @@
 
                 const allCardCodes = computed(() => Object.keys(DECK));
 
-                const remainingCards = computed(() => {
-                    return allCardCodes.value.length - drawnCards.value.length;
-                });
-
-                const hasCards = computed(() => {
-                    return drawnCards.value.length > 0;
+                const canDrawCard = computed(() => {
+                    return drawnCards.value.length < MAX_CARDS && !isLoading.value;
                 });
 
                 const loadStreamingPreference = () => {
@@ -275,15 +271,9 @@
                     }
                 };
 
-                const handleDeckClick = () => {
-                    if (drawnCards.value.length < MAX_CARDS && !isLoading.value) {
-                        drawCard();
-                    }
-                };
-
                 const drawCard = () => {
                     try {
-                        if (drawnCards.value.length >= MAX_CARDS || isLoading.value) return;
+                        if (!canDrawCard.value) return;
 
                         const drawnCodes = drawnCards.value.map(card => card.code);
                         const availableCodes = allCardCodes.value.filter(code => !drawnCodes.includes(code));
@@ -385,13 +375,11 @@
 
                 return {
                     drawnCards,
-                    remainingCards,
-                    hasCards,
+                    canDrawCard,
                     streamingPreference,
                     showCopiedFeedback,
                     showInfoModal,
                     isLoading,
-                    handleDeckClick,
                     drawCard,
                     startNewPull,
                     updateStreamingPreference,
