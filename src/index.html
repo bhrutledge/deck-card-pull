@@ -105,7 +105,7 @@
 
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script>
-        const { createApp, ref, computed, onMounted, watch } = Vue;
+        const { createApp, ref, computed, onMounted, watch, nextTick } = Vue;
 
         const MAX_CARDS = 13;
 
@@ -291,21 +291,32 @@
 
                         drawnCards.value.push(newCard);
 
-                        setTimeout(() => {
+                        nextTick(() => {
                             try {
                                 scrollToLatestCard();
                             } catch (scrollError) {
                                 console.warn('Scroll error (non-critical):', scrollError);
                             }
-                        }, 100);
+                        });
                     } catch (error) {
                         console.error('Error drawing card:', error);
                     }
                 };
 
+                const scrollToLatestCard = () => {
+                    const lastIndex = drawnCards.value.length - 1;
+                    const element = document.querySelector(`[data-card-index="${lastIndex}"]`);
+                    if (element) {
+                        element.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'center'
+                        });
+                    }
+                };
+
                 const startNewPull = () => {
                     drawnCards.value = [];
-                    setTimeout(() => {
+                    nextTick(() => {
                         // Try modern smooth scroll, fallback to instant scroll
                         try {
                             window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -315,7 +326,7 @@
                             document.documentElement.scrollTop = 0;
                             document.body.scrollTop = 0;
                         }
-                    }, 50);
+                    });
                 };
 
                 const copyUrlToClipboard = async () => {
@@ -347,17 +358,6 @@
                 const getCardTitle = (card) => {
                     const serviceName = STREAMING_SERVICE_NAMES[streamingPreference.value] || 'your preferred streaming service';
                     return `Open on ${serviceName}`;
-                };
-
-                const scrollToLatestCard = () => {
-                    const lastIndex = drawnCards.value.length - 1;
-                    const element = document.querySelector(`[data-card-index="${lastIndex}"]`);
-                    if (element) {
-                        element.scrollIntoView({
-                            behavior: 'smooth',
-                            block: 'center'
-                        });
-                    }
                 };
 
                 const onImageLoad = (event) => {
