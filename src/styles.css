@@ -137,10 +137,14 @@ body {
     height: calc(var(--card-width) * 1.4); /* 5:7 aspect ratio */
     border-radius: var(--radius-lg);
     cursor: pointer;
-    box-shadow: var(--shadow-card);
-    transition: transform var(--transition);
+    box-shadow: none;
+    transition: transform var(--transition), box-shadow var(--transition);
     position: relative;
     overflow: hidden;
+}
+
+.deck.image-loaded {
+    box-shadow: var(--shadow-card);
 }
 
 .deck-image {
@@ -150,7 +154,7 @@ body {
     display: block;
 }
 
-.deck:hover:not(.disabled) {
+.deck:hover:not(.disabled).image-loaded {
     transform: translateY(-2px);
     box-shadow: var(--shadow-card-hover);
 }
@@ -249,13 +253,17 @@ body {
     background-position: center;
     background-repeat: no-repeat;
     border-radius: var(--radius-sm);
-    box-shadow: var(--shadow-card);
+    box-shadow: none;
     margin-bottom: var(--spacing-xs);
     transition: transform var(--transition), box-shadow var(--transition);
     overflow: hidden;
 }
 
-.card-image-link:hover {
+.card-image-link.image-loaded {
+    box-shadow: var(--shadow-card);
+}
+
+.card-image-link:hover.image-loaded {
     transform: translateY(-4px);
     box-shadow: var(--shadow-card-hover);
 }

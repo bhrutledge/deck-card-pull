@@ -13,10 +13,10 @@
     <main id="app" class="container" v-cloak>
         <!-- Deck Component -->
         <div class="deck-container">
-            <div class="deck" :class="{ disabled: !canDrawCard }"
+            <div class="deck" :class="{ disabled: !canDrawCard, 'image-loaded': deckImageLoaded }"
                 @click="drawCard">
                 <img :src="CARD_BASE_URL + 'back.jpg'"
-                    alt="DECK card back - click to draw a card" class="deck-image" />
+                    alt="DECK card back - click to draw a card" class="deck-image" @load="onDeckImageLoad" />
             </div>
 
             <div v-if="drawnCards.length > 0" class="deck-controls">
@@ -68,9 +68,9 @@
         <div class="card-grid" v-if="drawnCards.length > 0">
             <div v-for="(card, index) in drawnCards" :key="card.code" class="card-grid-item" :data-card-index="index">
                 <a :href="getPreferredStreamingUrl(card)" target="_blank" rel="noopener noreferrer"
-                    :title="getCardTitle(card)" class="card-image-link">
+                    :title="getCardTitle(card)" class="card-image-link" :class="{ 'image-loaded': card.imageLoaded }">
                     <img :src="CARD_BASE_URL + card.code + '.jpg'"
-                        :alt="card.title" class="card-image" @load="onImageLoad" />
+                        :alt="card.title" class="card-image" @load="onCardImageLoad($event, card)" />
                 </a>
                 <div class="card-content">
                     <div class="card-number">{{ index + 1 }}</div>
@@ -133,6 +133,7 @@
                 const showCopiedFeedback = ref(false);
                 const showInfoModal = ref(false);
                 const isLoading = ref(true);
+                const deckImageLoaded = ref(false);
 
                 const loadDeckData = async () => {
                     try {
@@ -203,6 +204,7 @@
                         .filter(code => DECK[code])
                         .map(code => ({
                             code,
+                            imageLoaded: false,
                             ...DECK[code]
                         }));
 
@@ -286,6 +288,7 @@
 
                         const newCard = {
                             code: selectedCode,
+                            imageLoaded: false,
                             ...DECK[selectedCode]
                         };
 
@@ -360,6 +363,15 @@
                     return `Open on ${serviceName}`;
                 };
 
+                const onDeckImageLoad = () => {
+                    deckImageLoaded.value = true;
+                };
+
+                const onCardImageLoad = (event, card) => {
+                    event.target.classList.add('loaded');
+                    card.imageLoaded = true;
+                };
+
                 const onImageLoad = (event) => {
                     event.target.classList.add('loaded');
                 };
@@ -382,6 +394,7 @@
                     showCopiedFeedback,
                     showInfoModal,
                     isLoading,
+                    deckImageLoaded,
                     drawCard,
                     startNewPull,
                     updateStreamingPreference,
@@ -390,6 +403,8 @@
                     getSongName,
                     getCardName,
                     getCardTitle,
+                    onDeckImageLoad,
+                    onCardImageLoad,
                     onImageLoad,
                     MAX_CARDS,
                     STREAMING_SERVICES,
