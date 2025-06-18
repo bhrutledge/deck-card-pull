@@ -49,7 +49,7 @@
         </div>
 
         <!-- Instructions -->
-        <div v-if="drawnCards.length === 0" class="main-instructions">
+        <div v-if="drawnCards.length === 0 && !isLoading" class="main-instructions">
             <h1 class="main-title">The DECK deck</h1>
             <p class="main-subtitle">
                 from <a href="https://hallelujahthehills.com">Hallelujah The Hills</a>
@@ -142,10 +142,8 @@
                             throw new Error(`Failed to load deck data: ${response.status}`);
                         }
                         DECK = await response.json();
-                        isLoading.value = false;
                     } catch (error) {
                         console.error('Error loading deck data:', error);
-                        isLoading.value = false;
                     }
                 };
 
@@ -384,6 +382,7 @@
                     loadDeckData().then(() => {
                         loadFromURL();
                         loadStreamingPreference();
+                        isLoading.value = false;
                     });
                 });
 
