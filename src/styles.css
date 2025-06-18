@@ -99,9 +99,6 @@ body {
     max-width: var(--container-max-width);
     margin: 0 auto;
     padding: var(--spacing-md);
-}
-
-.main-content {
     display: grid;
     gap: var(--spacing-md);
     grid-template-columns: var(--card-container-width) 1fr;
@@ -427,7 +424,7 @@ body {
 }
 
 @media (min-width: 481px) {
-    .main-content {
+    .container {
         gap: var(--spacing-lg);
     }
 
@@ -445,7 +442,7 @@ body {
         --card-width: 140px;
     }
 
-    .main-content {
+    .container {
         gap: var(--spacing-xl);
     }
 

@@ -1,48 +1,426 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The DECK deck | Hallelujah The Hills</title>
-    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
-    <div id="app">
-        <div class="container">
-            <main class="main-content">
-                <deck-component
-                    :remaining-cards="remainingCards"
-                    :is-disabled="drawnCards.length >= MAX_CARDS"
-                    :has-cards="hasCards"
-                    :streaming-preference="streamingPreference"
-                    :drawn-cards="drawnCards"
-                    @draw-card="drawCard"
-                    @new-pull="startNewPull"
-                    @update-preference="saveStreamingPreference"
-                ></deck-component>
+    <main id="app" class="container">
+        <!-- Deck Component -->
+        <div class="deck-container">
+            <div class="deck" :class="{ disabled: drawnCards.length >= MAX_CARDS || isLoading }"
+                @click="handleDeckClick">
+                <img src="https://res.cloudinary.com/dgojqlr7m/image/upload/w_360,q_auto:good,f_auto/cards/back.jpg"
+                    alt="DECK card back - click to draw a card" class="deck-image" />
+            </div>
 
-                <div v-if="drawnCards.length === 0" class="main-instructions">
-                    <h1 class="main-title">The DECK deck</h1>
-                    <p class="main-subtitle">
-                        from <a href="https://hallelujahthehills.com">Hallelujah The Hills</a>
-                        <br>Cards designed by Ryan H. Walsh
-                    </p>
-                    <p>Think of a question, or a problem you are trying to solve, or something about your life you'd like to understand better. Then click the deck to pull up to 13 cards. Then make a playlist of those songs. That version of DECK can then serve as an audio tarot reading specifically for you. In fact, it likely will be yours and yours alone. There are over 635 billion different combinations/orders of 13 different cards/songs you can pull out of a 54 card deck, and so the likelihood of anyone pulling that specific set is extraordinarily unlikely.</p>
-                    <p>We love you. Good luck.</p>
+            <div v-if="drawnCards.length > 0" class="deck-controls">
+                <div class="action-icons">
+                    <button class="action-icon-btn" @click="startNewPull" title="Start again">
+                        <i class="fas fa-delete-left"></i>
+                    </button>
+                    <div class="share-button-container">
+                        <button class="action-icon-btn" @click="copyUrlToClipboard" title="Copy link to share">
+                            <i class="fas fa-link"></i>
+                        </button>
+                        <div v-if="showCopiedFeedback" class="copy-tooltip">
+                            A link for this draw has been copied to your clipboard.
+                        </div>
+                    </div>
+                    <button class="action-icon-btn" @click="showInfoModal = true" title="About DECK">
+                        <i class="fas fa-circle-question"></i>
+                    </button>
                 </div>
-
-                <card-list
-                    ref="cardListRef"
-                    :drawn-cards="drawnCards"
-                    :get-preferred-streaming-url="getPreferredStreamingUrl"
-                    :streaming-preference="streamingPreference"
-                ></card-list>
-            </main>
+                <div class="streaming-selector">
+                    <label for="streaming-select" class="streaming-label">Song links open in:</label>
+                    <select id="streaming-select" class="streaming-select" :value="streamingPreference"
+                        @change="updateStreamingPreference($event.target.value)">
+                        <option v-for="service in STREAMING_SERVICES" :key="service.value" :value="service.value">
+                            {{ service.name }}
+                        </option>
+                    </select>
+                </div>
+            </div>
         </div>
-    </div>
 
-    <script src="app.js"></script>
+        <!-- Instructions -->
+        <div v-if="drawnCards.length === 0" class="main-instructions">
+            <h1 class="main-title">The DECK deck</h1>
+            <p class="main-subtitle">
+                from <a href="https://hallelujahthehills.com">Hallelujah The Hills</a>
+                <br>Cards designed by Ryan H. Walsh
+            </p>
+            <p>Think of a question, or a problem you are trying to solve, or something about your life you'd like to
+                understand better. Then click the deck to pull up to 13 cards. Then make a playlist of those songs. That
+                version of DECK can then serve as an audio tarot reading specifically for you. In fact, it likely will
+                be yours and yours alone. There are over 635 billion different combinations/orders of 13 different
+                cards/songs you can pull out of a 54 card deck, and so the likelihood of anyone pulling that specific
+                set is extraordinarily unlikely.</p>
+            <p>We love you. Good luck.</p>
+        </div>
+
+        <!-- Card Grid -->
+        <div class="card-grid" v-if="drawnCards.length > 0">
+            <div v-for="(card, index) in drawnCards" :key="card.code" class="card-grid-item" :data-card-index="index">
+                <a :href="getPreferredStreamingUrl(card)" target="_blank" rel="noopener noreferrer"
+                    :title="getCardTitle(card)" class="card-image-link">
+                    <img :src="'https://res.cloudinary.com/dgojqlr7m/image/upload/w_360,q_auto:good,f_auto/cards/' + card.code + '.jpg'"
+                        :alt="card.title" class="card-image" @load="onImageLoad" />
+                </a>
+                <div class="card-content">
+                    <div class="card-number">{{ index + 1 }}</div>
+                    <div class="card-title">
+                        <a :href="getPreferredStreamingUrl(card)" target="_blank" rel="noopener noreferrer"
+                            :title="getCardTitle(card)" class="song-title-link">{{ getSongName(card.title) }}</a>
+                        <br><span class="card-name">{{ getCardName(card.title) }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Info Modal -->
+        <div v-if="showInfoModal" class="modal-overlay" @click="showInfoModal = false">
+            <div class="modal-content" @click.stop>
+                <button class="modal-close" @click="showInfoModal = false">
+                    <i class="fas fa-times"></i>
+                </button>
+                <p><a href="https://www.hallelujahthehills.com/music/deck/" target="_blank"
+                        rel="noopener noreferrer">DECK</a> is 3.5+ hours of music from Hallelujah The Hills. DECK is 4
+                    albums released in one day. DECK is an actual deck of playing cards with a visual design meant to
+                    reflect the song it corresponds to. DECK is an invitation to listeners to craft their own
+                    musical/visual experience however they wish to do so.</p>
+                <a href="https://www.hallelujahthehills.com/music/deck/" target="_blank" rel="noopener noreferrer">
+                    <img width="360" height="360"
+                        src="https://res.cloudinary.com/dgojqlr7m/image/upload/c_fill,w_360/DECK_4_panel.jpg"
+                        alt="DECK Album Art">
+                </a>
+            </div>
+        </div>
+    </main>
+    </main>
+
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script>
+        const { createApp, ref, computed, onMounted, watch } = Vue;
+
+        const MAX_CARDS = 13;
+
+        const STREAMING_SERVICES = [
+            { value: 'appleMusic', name: 'Apple Music' },
+            { value: 'bandcamp', name: 'Bandcamp' },
+            { value: 'spotify', name: 'Spotify' },
+            { value: 'youTubeMusic', name: 'YouTube Music' }
+        ];
+
+        const STREAMING_SERVICE_KEYS = STREAMING_SERVICES.map(service => service.value);
+
+        const STREAMING_SERVICE_NAMES = Object.fromEntries(
+            STREAMING_SERVICES.map(service => [service.value, service.name])
+        );
+
+        let DECK = {};
+
+        const App = {
+            setup() {
+                const drawnCards = ref([]);
+                const streamingPreference = ref('bandcamp');
+                const showCopiedFeedback = ref(false);
+                const showInfoModal = ref(false);
+                const isLoading = ref(true);
+
+                const loadDeckData = async () => {
+                    try {
+                        const response = await fetch('deck.json');
+                        if (!response.ok) {
+                            throw new Error(`Failed to load deck data: ${response.status}`);
+                        }
+                        DECK = await response.json();
+                        isLoading.value = false;
+                    } catch (error) {
+                        console.error('Error loading deck data:', error);
+                        isLoading.value = false;
+                    }
+                };
+
+                const allCardCodes = computed(() => Object.keys(DECK));
+
+                const remainingCards = computed(() => {
+                    return allCardCodes.value.length - drawnCards.value.length;
+                });
+
+                const hasCards = computed(() => {
+                    return drawnCards.value.length > 0;
+                });
+
+                const loadStreamingPreference = () => {
+                    try {
+                        const saved = localStorage.getItem('streamingPreference');
+                        if (saved && STREAMING_SERVICE_KEYS.includes(saved)) {
+                            streamingPreference.value = saved;
+                        }
+                    } catch (error) {
+                        console.error('Error loading streaming preference:', error);
+                    }
+                };
+
+                const updateStreamingPreference = (preference) => {
+                    try {
+                        streamingPreference.value = preference;
+                        localStorage.setItem('streamingPreference', preference);
+                    } catch (error) {
+                        console.error('Error saving streaming preference:', error);
+                    }
+                };
+
+                const getPreferredStreamingUrl = (card) => {
+                    const urlMap = Object.fromEntries(
+                        STREAMING_SERVICE_KEYS.map(key => [key, card[key]])
+                    );
+                    return urlMap[streamingPreference.value];
+                };
+
+                const updateURL = () => {
+                    try {
+                        const url = new URL(window.location);
+                        if (drawnCards.value.length > 0) {
+                            const cardCodes = drawnCards.value.map(card => card.code).join('');
+                            if (cardCodes.length < 200) {
+                                url.searchParams.set('cards', cardCodes);
+                            }
+                        } else {
+                            url.searchParams.delete('cards');
+                        }
+                        window.history.replaceState({}, '', url);
+                    } catch (error) {
+                        console.warn('URL update error (non-critical):', error);
+                    }
+                };
+
+                const loadPullFromCodes = (cardCodes) => {
+                    const validCards = cardCodes
+                        .filter(code => DECK[code])
+                        .map(code => ({
+                            code,
+                            ...DECK[code]
+                        }));
+
+                    drawnCards.value = validCards;
+                };
+
+                const parseCardCodes = (cardCodesString) => {
+                    const cardCodes = [];
+                    let i = 0;
+                    while (i < cardCodesString.length) {
+                        if (i + 2 < cardCodesString.length) {
+                            const code3 = cardCodesString.substring(i, i + 3);
+                            if (DECK[code3]) {
+                                cardCodes.push(code3);
+                                i += 3;
+                                continue;
+                            }
+                        }
+                        if (i + 1 < cardCodesString.length) {
+                            const code2 = cardCodesString.substring(i, i + 2);
+                            if (DECK[code2]) {
+                                cardCodes.push(code2);
+                                i += 2;
+                                continue;
+                            }
+                        }
+                        i++;
+                    }
+                    return cardCodes;
+                };
+
+                const loadFromURL = () => {
+                    try {
+                        const url = new URL(window.location);
+                        const cardsParam = url.searchParams.get('cards');
+                        if (cardsParam && cardsParam.length < 200) {
+                            const cardCodes = parseCardCodes(cardsParam);
+
+                            if (cardCodes.length === 0 && cardsParam.length > 0) {
+                                throw new Error('No valid cards found in URL parameter');
+                            }
+
+                            if (cardCodes.length > MAX_CARDS) {
+                                throw new Error('Too many cards in URL parameter, ignoring');
+                            }
+
+                            const uniqueCardCodes = [...new Set(cardCodes)];
+                            if (uniqueCardCodes.length !== cardCodes.length) {
+                                throw new Error('Duplicate cards found in URL parameter, ignoring');
+                            }
+
+                            if (cardCodes.length > 0) {
+                                loadPullFromCodes(cardCodes);
+                            }
+                        }
+                    } catch (error) {
+                        console.warn('URL parsing error (non-critical):', error.message || error);
+                        try {
+                            const url = new URL(window.location);
+                            if (url.searchParams.has('cards')) {
+                                url.searchParams.delete('cards');
+                                window.history.replaceState({}, '', url);
+                            }
+                        } catch (urlError) {
+                            console.warn('Failed to clean up URL:', urlError);
+                        }
+                    }
+                };
+
+                const handleDeckClick = () => {
+                    if (drawnCards.value.length < MAX_CARDS && !isLoading.value) {
+                        drawCard();
+                    }
+                };
+
+                const drawCard = () => {
+                    try {
+                        if (drawnCards.value.length >= MAX_CARDS || isLoading.value) return;
+
+                        const drawnCodes = drawnCards.value.map(card => card.code);
+                        const availableCodes = allCardCodes.value.filter(code => !drawnCodes.includes(code));
+
+                        if (availableCodes.length === 0) return;
+
+                        const randomIndex = Math.floor(Math.random() * availableCodes.length);
+                        const selectedCode = availableCodes[randomIndex];
+
+                        const newCard = {
+                            code: selectedCode,
+                            ...DECK[selectedCode]
+                        };
+
+                        drawnCards.value.push(newCard);
+
+                        setTimeout(() => {
+                            try {
+                                scrollToLatestCard();
+                            } catch (scrollError) {
+                                console.warn('Scroll error (non-critical):', scrollError);
+                            }
+                        }, 100);
+                    } catch (error) {
+                        console.error('Error drawing card:', error);
+                    }
+                };
+
+                const startNewPull = () => {
+                    drawnCards.value = [];
+                    setTimeout(() => {
+                        try {
+                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                        } catch (e) {
+                            window.scrollTo(0, 0);
+                        }
+
+                        if (document.documentElement) {
+                            document.documentElement.scrollTop = 0;
+                        }
+                        if (document.body) {
+                            document.body.scrollTop = 0;
+                        }
+                    }, 50);
+                };
+
+                const copyUrlToClipboard = async () => {
+                    try {
+                        await navigator.clipboard.writeText(window.location.href);
+                        showCopiedFeedback.value = true;
+                        setTimeout(() => {
+                            showCopiedFeedback.value = false;
+                        }, 3000);
+                    } catch (err) {
+                        console.error('Failed to copy URL to clipboard:', err);
+                    }
+                };
+
+                const getSongName = (title) => {
+                    const parenIndex = title.lastIndexOf('(');
+                    return parenIndex !== -1 ? title.substring(0, parenIndex).trim() : title;
+                };
+
+                const getCardName = (title) => {
+                    const parenIndex = title.lastIndexOf('(');
+                    return parenIndex !== -1 ? ' ' + title.substring(parenIndex) : '';
+                };
+
+                const getCardTitle = (card) => {
+                    const serviceName = STREAMING_SERVICE_NAMES[streamingPreference.value] || 'your preferred streaming service';
+                    return `Open on ${serviceName}`;
+                };
+
+                const scrollToLatestCard = () => {
+                    const lastIndex = drawnCards.value.length - 1;
+                    const element = document.querySelector(`[data-card-index="${lastIndex}"]`);
+                    if (element) {
+                        element.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'center'
+                        });
+                    }
+                };
+
+                const onImageLoad = (event) => {
+                    event.target.classList.add('loaded');
+                };
+
+                watch(drawnCards, () => {
+                    updateURL();
+                }, { deep: true });
+
+                onMounted(() => {
+                    loadDeckData().then(() => {
+                        loadFromURL();
+                        loadStreamingPreference();
+                    });
+                });
+
+                return {
+                    drawnCards,
+                    remainingCards,
+                    hasCards,
+                    streamingPreference,
+                    showCopiedFeedback,
+                    showInfoModal,
+                    isLoading,
+                    handleDeckClick,
+                    drawCard,
+                    startNewPull,
+                    updateStreamingPreference,
+                    getPreferredStreamingUrl,
+                    copyUrlToClipboard,
+                    getSongName,
+                    getCardName,
+                    getCardTitle,
+                    onImageLoad,
+                    MAX_CARDS,
+                    STREAMING_SERVICES
+                };
+            }
+        };
+
+        const app = createApp(App);
+
+        app.config.errorHandler = (err, instance, info) => {
+            console.error('Vue error:', err);
+            console.error('Error info:', info);
+        };
+
+        window.addEventListener('unhandledrejection', event => {
+            console.error('Unhandled promise rejection:', event.reason);
+            event.preventDefault();
+        });
+
+        app.mount('#app');
+    </script>
 </body>
+
 </html>

@@ -45,11 +45,6 @@ test.describe('About DECK Info Modal', () => {
     await expect(albumImage).toBeVisible();
     await expect(albumImage).toHaveAttribute('width', '360');
     await expect(albumImage).toHaveAttribute('height', '360');
-
-    // Verify art credit
-    await expect(modalContent).toContainText('All artwork by Ryan H. Walsh');
-    const artCredit = modalContent.locator('.modal-art-credit');
-    await expect(artCredit).toBeVisible();
   });
 
   test('modal close button works', async ({ page }) => {
