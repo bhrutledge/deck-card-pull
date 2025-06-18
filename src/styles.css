@@ -78,6 +78,11 @@
     box-sizing: border-box;
 }
 
+/* Vue.js v-cloak directive to prevent flash of uncompiled template */
+[v-cloak] {
+    display: none !important;
+}
+
 h1, h2, h3, h4, h5, h6 {
     color: var(--heading-color);
 }
