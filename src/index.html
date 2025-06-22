@@ -22,10 +22,10 @@
     <main id="app" class="container" v-cloak>
         <!-- Deck Component -->
         <div class="deck-container">
-            <div class="deck" :class="{ disabled: !canDrawCard, 'image-loaded': deckImageLoaded }"
+            <div class="deck" :class="{ disabled: !canDrawCard, 'image-loaded': cardImagesLoaded.has('back') }"
                 @click="drawCard">
                 <img :src="CARD_BASE_URL + 'back.jpg'"
-                    alt="DECK card back - click to draw a card" class="deck-image" @load="onDeckImageLoad" />
+                    alt="DECK card back - click to draw a card" class="deck-image" @load="onImageLoad($event, 'back')" />
             </div>
 
             <div v-if="drawnCards.length > 0" class="deck-controls">
@@ -34,7 +34,7 @@
                         <i class="fas fa-delete-left"></i>
                     </button>
                     <div class="share-button-container">
-                        <button class="action-icon-btn" @click="copyUrlToClipboard" title="Copy link to share">
+                        <button class="action-icon-btn" @click="copyUrl" title="Copy link to share">
                             <i class="fas fa-link"></i>
                         </button>
                         <div v-if="showCopiedFeedback" class="copy-tooltip">
@@ -48,7 +48,7 @@
                 <div class="streaming-selector">
                     <label for="streaming-select" class="streaming-label">Song links open in:</label>
                     <select id="streaming-select" class="streaming-select" :value="streamingPreference"
-                        @change="updateStreamingPreference($event.target.value)">
+                        @change="setStreamingPreference">
                         <option v-for="service in STREAMING_SERVICES" :key="service.value" :value="service.value">
                             {{ service.name }}
                         </option>
@@ -76,17 +76,17 @@
         <!-- Card Grid -->
         <div class="card-grid" v-if="drawnCards.length > 0">
             <div v-for="(card, index) in drawnCards" :key="card.code" class="card-grid-item" :data-card-index="index">
-                <a :href="getPreferredStreamingUrl(card)" target="_blank" rel="noopener noreferrer"
-                    :title="getCardTitle(card)" class="card-image-link" :class="{ 'image-loaded': card.imageLoaded }">
+                <a :href="card.streamingUrl" target="_blank" rel="noopener noreferrer"
+                    :title="card.linkTitle" class="card-image-link" :class="{ 'image-loaded': cardImagesLoaded.has(card.code) }">
                     <img :src="CARD_BASE_URL + card.code + '.jpg'"
-                        :alt="card.title" class="card-image" @load="onCardImageLoad($event, card)" />
+                        :alt="card.title" class="card-image" @load="onImageLoad($event, card.code)" />
                 </a>
                 <div class="card-content">
                     <div class="card-number">{{ index + 1 }}</div>
                     <div class="card-title">
-                        <a :href="getPreferredStreamingUrl(card)" target="_blank" rel="noopener noreferrer"
-                            :title="getCardTitle(card)" class="song-title-link">{{ getSongName(card.title) }}</a>
-                        <br><span class="card-name">{{ getCardName(card.title) }}</span>
+                        <a :href="card.streamingUrl" target="_blank" rel="noopener noreferrer"
+                            :title="card.linkTitle" class="song-title-link">{{ card.songName }}</a>
+                        <br><span class="card-name">{{ card.cardName }}</span>
                     </div>
                 </div>
             </div>
@@ -137,12 +137,12 @@
 
         const App = {
             setup() {
-                const drawnCards = ref([]);
+                const drawnCodes = ref([]);
+                const cardImagesLoaded = ref(new Set());
                 const streamingPreference = ref('bandcamp');
                 const showCopiedFeedback = ref(false);
                 const showInfoModal = ref(false);
                 const isLoading = ref(true);
-                const deckImageLoaded = ref(false);
 
                 const loadDeckData = async () => {
                     try {
@@ -156,7 +156,25 @@
                     }
                 };
 
-                const allCardCodes = computed(() => Object.keys(DECK));
+                const drawnCards = computed(() => {
+                    return drawnCodes.value.map((code, index) => {
+                        const deckCard = DECK[code];
+                        const parenIndex = deckCard.title.lastIndexOf('(');
+                        const songName = parenIndex === -1 ? deckCard.title : deckCard.title.substring(0, parenIndex).trim();
+                        const cardName = parenIndex === -1 ? '' : ' ' + deckCard.title.substring(parenIndex);
+                        const serviceName = STREAMING_SERVICE_NAMES[streamingPreference.value] || 'your preferred streaming service';
+
+                        return {
+                            code,
+                            index,
+                            songName,
+                            cardName,
+                            linkTitle: `Open on ${serviceName}`,
+                            streamingUrl: deckCard[streamingPreference.value],
+                            ...deckCard
+                        };
+                    });
+                });
 
                 const canDrawCard = computed(() => {
                     return drawnCards.value.length < MAX_CARDS && !isLoading.value;
@@ -173,8 +191,9 @@
                     }
                 };
 
-                const updateStreamingPreference = (preference) => {
+                const setStreamingPreference = (event) => {
                     try {
+                        const preference = event.target.value;
                         streamingPreference.value = preference;
                         localStorage.setItem('streamingPreference', preference);
                     } catch (error) {
@@ -182,18 +201,11 @@
                     }
                 };
 
-                const getPreferredStreamingUrl = (card) => {
-                    const urlMap = Object.fromEntries(
-                        STREAMING_SERVICE_KEYS.map(key => [key, card[key]])
-                    );
-                    return urlMap[streamingPreference.value];
-                };
-
                 const updateURL = () => {
                     try {
                         const url = new URL(window.location);
-                        if (drawnCards.value.length > 0) {
-                            const cardCodes = drawnCards.value.map(card => card.code).join('');
+                        if (drawnCodes.value.length > 0) {
+                            const cardCodes = drawnCodes.value.join('');
                             if (cardCodes.length < 200) {
                                 url.searchParams.set('cards', cardCodes);
                             }
@@ -207,15 +219,8 @@
                 };
 
                 const loadPullFromCodes = (cardCodes) => {
-                    const validCards = cardCodes
-                        .filter(code => DECK[code])
-                        .map(code => ({
-                            code,
-                            imageLoaded: false,
-                            ...DECK[code]
-                        }));
-
-                    drawnCards.value = validCards;
+                    const validCodes = cardCodes.filter(code => DECK[code]);
+                    drawnCodes.value = validCodes;
                 };
 
                 const parseCardCodes = (cardCodesString) => {
@@ -285,21 +290,13 @@
                     try {
                         if (!canDrawCard.value) return;
 
-                        const drawnCodes = drawnCards.value.map(card => card.code);
-                        const availableCodes = allCardCodes.value.filter(code => !drawnCodes.includes(code));
-
+                        const availableCodes = Object.keys(DECK).filter(code => !drawnCodes.value.includes(code));
                         if (availableCodes.length === 0) return;
 
                         const randomIndex = Math.floor(Math.random() * availableCodes.length);
                         const selectedCode = availableCodes[randomIndex];
 
-                        const newCard = {
-                            code: selectedCode,
-                            imageLoaded: false,
-                            ...DECK[selectedCode]
-                        };
-
-                        drawnCards.value.push(newCard);
+                        drawnCodes.value.push(selectedCode);
 
                         nextTick(() => {
                             try {
@@ -325,7 +322,8 @@
                 };
 
                 const startNewPull = () => {
-                    drawnCards.value = [];
+                    drawnCodes.value = [];
+                    cardImagesLoaded.value.clear();
                     nextTick(() => {
                         // Try modern smooth scroll, fallback to instant scroll
                         try {
@@ -339,7 +337,7 @@
                     });
                 };
 
-                const copyUrlToClipboard = async () => {
+                const copyUrl = async () => {
                     try {
                         await navigator.clipboard.writeText(window.location.href);
                         showCopiedFeedback.value = true;
@@ -351,39 +349,12 @@
                     }
                 };
 
-                const parseCardTitle = (title) => {
-                    const parenIndex = title.lastIndexOf('(');
-                    if (parenIndex === -1) {
-                        return { songName: title, cardName: '' };
-                    }
-                    return {
-                        songName: title.substring(0, parenIndex).trim(),
-                        cardName: ' ' + title.substring(parenIndex)
-                    };
-                };
-
-                const getSongName = (title) => parseCardTitle(title).songName;
-                const getCardName = (title) => parseCardTitle(title).cardName;
-
-                const getCardTitle = (card) => {
-                    const serviceName = STREAMING_SERVICE_NAMES[streamingPreference.value] || 'your preferred streaming service';
-                    return `Open on ${serviceName}`;
-                };
-
-                const onDeckImageLoad = () => {
-                    deckImageLoaded.value = true;
-                };
-
-                const onCardImageLoad = (event, card) => {
+                const onImageLoad = (event, cardCode) => {
                     event.target.classList.add('loaded');
-                    card.imageLoaded = true;
+                    cardImagesLoaded.value.add(cardCode);
                 };
 
-                const onImageLoad = (event) => {
-                    event.target.classList.add('loaded');
-                };
-
-                watch(drawnCards, () => {
+                watch(drawnCodes, () => {
                     updateURL();
                 }, { deep: true });
 
@@ -402,17 +373,11 @@
                     showCopiedFeedback,
                     showInfoModal,
                     isLoading,
-                    deckImageLoaded,
+                    cardImagesLoaded,
                     drawCard,
                     startNewPull,
-                    updateStreamingPreference,
-                    getPreferredStreamingUrl,
-                    copyUrlToClipboard,
-                    getSongName,
-                    getCardName,
-                    getCardTitle,
-                    onDeckImageLoad,
-                    onCardImageLoad,
+                    setStreamingPreference,
+                    copyUrl,
                     onImageLoad,
                     MAX_CARDS,
                     STREAMING_SERVICES,
