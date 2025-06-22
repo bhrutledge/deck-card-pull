@@ -135,14 +135,18 @@
 
         let DECK = {};
 
-        const App = {
+        const app = createApp({
             setup() {
+                // ===== REACTIVE STATE =====
+
+                const isLoading = ref(true);
                 const drawnCodes = ref([]);
                 const cardImagesLoaded = ref(new Set());
                 const streamingPreference = ref('bandcamp');
                 const showCopiedFeedback = ref(false);
                 const showInfoModal = ref(false);
-                const isLoading = ref(true);
+
+                // ===== LIFECYCLE =====
 
                 const loadDeckData = async () => {
                     try {
@@ -156,72 +160,20 @@
                     }
                 };
 
-                const drawnCards = computed(() => {
-                    return drawnCodes.value.map((code, index) => {
-                        const deckCard = DECK[code];
-                        const parenIndex = deckCard.title.lastIndexOf('(');
-                        const songName = parenIndex === -1 ? deckCard.title : deckCard.title.substring(0, parenIndex).trim();
-                        const cardName = parenIndex === -1 ? '' : ' ' + deckCard.title.substring(parenIndex);
-                        const serviceName = STREAMING_SERVICE_NAMES[streamingPreference.value] || 'your preferred streaming service';
-
-                        return {
-                            code,
-                            index,
-                            songName,
-                            cardName,
-                            linkTitle: `Open on ${serviceName}`,
-                            streamingUrl: deckCard[streamingPreference.value],
-                            ...deckCard
-                        };
+                onMounted(() => {
+                    loadDeckData().then(() => {
+                        loadCardsFromURL();
+                        loadStreamingPreference();
+                        isLoading.value = false;
                     });
                 });
 
-                const canDrawCard = computed(() => {
-                    return drawnCards.value.length < MAX_CARDS && !isLoading.value;
-                });
-
-                const loadStreamingPreference = () => {
-                    try {
-                        const saved = localStorage.getItem('streamingPreference');
-                        if (saved && STREAMING_SERVICE_KEYS.includes(saved)) {
-                            streamingPreference.value = saved;
-                        }
-                    } catch (error) {
-                        console.error('Error loading streaming preference:', error);
-                    }
+                const onImageLoad = (event, cardCode) => {
+                    event.target.classList.add('loaded');
+                    cardImagesLoaded.value.add(cardCode);
                 };
 
-                const setStreamingPreference = (event) => {
-                    try {
-                        const preference = event.target.value;
-                        streamingPreference.value = preference;
-                        localStorage.setItem('streamingPreference', preference);
-                    } catch (error) {
-                        console.error('Error saving streaming preference:', error);
-                    }
-                };
-
-                const updateURL = () => {
-                    try {
-                        const url = new URL(window.location);
-                        if (drawnCodes.value.length > 0) {
-                            const cardCodes = drawnCodes.value.join('');
-                            if (cardCodes.length < 200) {
-                                url.searchParams.set('cards', cardCodes);
-                            }
-                        } else {
-                            url.searchParams.delete('cards');
-                        }
-                        window.history.replaceState({}, '', url);
-                    } catch (error) {
-                        console.warn('URL update error (non-critical):', error);
-                    }
-                };
-
-                const loadPullFromCodes = (cardCodes) => {
-                    const validCodes = cardCodes.filter(code => DECK[code]);
-                    drawnCodes.value = validCodes;
-                };
+                // ===== URL HANDLING =====
 
                 const parseCardCodes = (cardCodesString) => {
                     const cardCodes = [];
@@ -248,7 +200,7 @@
                     return cardCodes;
                 };
 
-                const loadFromURL = () => {
+                const loadCardsFromURL = () => {
                     try {
                         const url = new URL(window.location);
                         const cardsParam = url.searchParams.get('cards');
@@ -269,7 +221,8 @@
                             }
 
                             if (cardCodes.length > 0) {
-                                loadPullFromCodes(cardCodes);
+                                const validCodes = cardCodes.filter(code => DECK[code]);
+                                drawnCodes.value = validCodes;
                             }
                         }
                     } catch (error) {
@@ -285,6 +238,88 @@
                         }
                     }
                 };
+
+                const updateURL = () => {
+                    try {
+                        const url = new URL(window.location);
+                        if (drawnCodes.value.length > 0) {
+                            const cardCodes = drawnCodes.value.join('');
+                            if (cardCodes.length < 200) {
+                                url.searchParams.set('cards', cardCodes);
+                            }
+                        } else {
+                            url.searchParams.delete('cards');
+                        }
+                        window.history.replaceState({}, '', url);
+                    } catch (error) {
+                        console.warn('URL update error (non-critical):', error);
+                    }
+                };
+
+                watch(drawnCodes, () => {
+                    updateURL();
+                }, { deep: true });
+
+                const copyUrl = async () => {
+                    try {
+                        await navigator.clipboard.writeText(window.location.href);
+                        showCopiedFeedback.value = true;
+                        setTimeout(() => {
+                            showCopiedFeedback.value = false;
+                        }, 3000);
+                    } catch (err) {
+                        console.error('Failed to copy URL to clipboard:', err);
+                    }
+                };
+
+                // ===== STREAMING PREFERENCE =====
+
+                const loadStreamingPreference = () => {
+                    try {
+                        const saved = localStorage.getItem('streamingPreference');
+                        if (saved && STREAMING_SERVICE_KEYS.includes(saved)) {
+                            streamingPreference.value = saved;
+                        }
+                    } catch (error) {
+                        console.error('Error loading streaming preference:', error);
+                    }
+                };
+
+                const setStreamingPreference = (event) => {
+                    try {
+                        const preference = event.target.value;
+                        streamingPreference.value = preference;
+                        localStorage.setItem('streamingPreference', preference);
+                    } catch (error) {
+                        console.error('Error saving streaming preference:', error);
+                    }
+                };
+
+                // ===== CARD DRAWING =====
+
+                const drawnCards = computed(() => {
+                    return drawnCodes.value.map((code, index) => {
+                        const deckCard = DECK[code];
+                        const parenIndex = deckCard.title.lastIndexOf('(');
+                        const songName = parenIndex === -1 ? deckCard.title : deckCard.title.substring(0, parenIndex).trim();
+                        const cardName = parenIndex === -1 ? '' : ' ' + deckCard.title.substring(parenIndex);
+                        const serviceName = STREAMING_SERVICE_NAMES[streamingPreference.value] || 'your preferred streaming service';
+
+                        return {
+                            code,
+                            index,
+                            songName,
+                            cardName,
+                            linkTitle: `Open on ${serviceName}`,
+                            streamingUrl: deckCard[streamingPreference.value],
+                            ...deckCard
+                        };
+                    });
+                });
+
+                const canDrawCard = computed(() => {
+                    return drawnCards.value.length < MAX_CARDS && !isLoading.value;
+                });
 
                 const drawCard = () => {
                     try {
@@ -310,7 +345,7 @@
                     }
                 };
 
-                const scrollToLatestCard = () => {
+               const scrollToLatestCard = () => {
                     const lastIndex = drawnCards.value.length - 1;
                     const element = document.querySelector(`[data-card-index="${lastIndex}"]`);
                     if (element) {
@@ -337,56 +372,25 @@
                     });
                 };
 
-                const copyUrl = async () => {
-                    try {
-                        await navigator.clipboard.writeText(window.location.href);
-                        showCopiedFeedback.value = true;
-                        setTimeout(() => {
-                            showCopiedFeedback.value = false;
-                        }, 3000);
-                    } catch (err) {
-                        console.error('Failed to copy URL to clipboard:', err);
-                    }
-                };
-
-                const onImageLoad = (event, cardCode) => {
-                    event.target.classList.add('loaded');
-                    cardImagesLoaded.value.add(cardCode);
-                };
-
-                watch(drawnCodes, () => {
-                    updateURL();
-                }, { deep: true });
-
-                onMounted(() => {
-                    loadDeckData().then(() => {
-                        loadFromURL();
-                        loadStreamingPreference();
-                        isLoading.value = false;
-                    });
-                });
-
                 return {
+                    isLoading,
                     drawnCards,
-                    canDrawCard,
+                    cardImagesLoaded,
                     streamingPreference,
                     showCopiedFeedback,
                     showInfoModal,
-                    isLoading,
-                    cardImagesLoaded,
+                    onImageLoad,
+                    copyUrl,
+                    setStreamingPreference,
+                    canDrawCard,
                     drawCard,
                     startNewPull,
-                    setStreamingPreference,
-                    copyUrl,
-                    onImageLoad,
                     MAX_CARDS,
                     STREAMING_SERVICES,
                     CARD_BASE_URL
                 };
             }
-        };
-
-        const app = createApp(App);
+        });
 
         app.config.errorHandler = (err, instance, info) => {
             console.error('Vue error:', err);
